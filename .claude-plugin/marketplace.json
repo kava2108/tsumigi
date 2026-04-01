@@ -1,0 +1,8 @@
+{
+  "name": "tsumigi",
+  "displayName": "tsumigi — AI-TDD Engine",
+  "description": "Issue→IMP→実装→テスト→逆仕様→同期 を AI-TDD として一貫実行。IMP構造化・drift correction・reviewer-oriented出力を提供するClaude Skillsフレームワーク。",
+  "version": "1.0.0",
+  "categories": ["development", "tdd", "documentation"],
+  "install": "/plugin install tsumigi@tsumigi"
+}

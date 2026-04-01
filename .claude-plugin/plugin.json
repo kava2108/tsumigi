@@ -1,0 +1,13 @@
+{
+  "name": "tsumigi",
+  "version": "1.0.0",
+  "description": "AI-TDD engine for Claude Code: Issue→IMP→実装→テスト→逆仕様→同期 を一貫して実行するSkillsフレームワーク",
+  "author": {
+    "name": "tsumigi contributors"
+  },
+  "homepage": "https://github.com/kava2108/tsumigi",
+  "repository": "https://github.com/kava2108/tsumigi",
+  "license": "MIT",
+  "keywords": ["ai-tdd", "imp", "drift-correction", "reviewer-oriented", "speckit"],
+  "commands": "./commands/"
+}
