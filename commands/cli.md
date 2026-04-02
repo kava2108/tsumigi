@@ -29,8 +29,8 @@ suggested_command={{suggested_command}}
 
 クエリに issue_id らしき文字列が含まれない場合：
 - `.tsumigi/config.json` を存在する場合に Read する
-- `docs/issues/` を Glob して存在する issue_id 一覧を取得する
-- `docs/imps/` を Glob して IMP 済みの issue_id 一覧を取得する
+- `specs/` を Glob して存在する issue_id 一覧を取得する
+- `specs/` を Glob して IMP 済みの issue_id 一覧を取得する
 - AskUserQuestion で対象 issue を選択させる
 
 ## step3: クエリの解析とコマンドのルーティング
@@ -158,21 +158,21 @@ suggested_command={{suggested_command}}
 
 issue_id が特定されている場合：
 - 以下の成果物の存在を Glob で確認する：
-  - `docs/issues/{{issue_id}}/issue-struct.md` → issue_init 完了？
-  - `docs/imps/{{issue_id}}/IMP.md` → imp_generate 完了？
-  - `docs/implements/{{issue_id}}/` → implement 着手？
-  - `docs/tests/{{issue_id}}/` → test 実施済み？
-  - `docs/specs/{{issue_id}}/` → rev 実施済み？
-  - `docs/drift/{{issue_id}}/` → drift_check 実施済み？
-  - `docs/sync/{{issue_id}}/` → sync 実施済み？
-  - `docs/reviews/{{issue_id}}/` → review 実施済み？
+  - `specs/{{issue_id}}/issue-struct.md` → issue_init 完了？
+  - `specs/{{issue_id}}/IMP.md` → imp_generate 完了？
+  - `specs/{{issue_id}}/implements/` → implement 着手？
+  - `specs/{{issue_id}}/tests/` → test 実施済み？
+  - `specs/{{issue_id}}/` → rev 実施済み？
+  - `specs/{{issue_id}}/` → drift_check 実施済み？
+  - `specs/{{issue_id}}/` → sync 実施済み？
+  - `specs/{{issue_id}}/` → review 実施済み？
 
 - 現在の進捗を表示する：
   ```
   📊 {{issue_id}} の進捗状況:
 
-  ✅ issue_init   — docs/issues/{{issue_id}}/ 存在
-  ✅ imp_generate — docs/imps/{{issue_id}}/IMP.md 存在
+  ✅ issue_init   — specs/{{issue_id}}/ 存在
+  ✅ imp_generate — specs/{{issue_id}}/IMP.md 存在
   🔄 implement    — 着手中 (TASK-0001 完了, TASK-0002 未着手)
   ❌ test         — 未実施
   ❌ rev          — 未実施

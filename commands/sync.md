@@ -15,8 +15,8 @@ Issue/IMP/実装/ドキュメントの整合性を確認します。
 issue_id={{issue_id}}
 fix_mode={{fix_mode}}
 report_only={{report_only}}
-sync_report_file=docs/sync/{{issue_id}}/sync-report.md
-sync_actions_file=docs/sync/{{issue_id}}/sync-actions.md
+sync_report_file=specs/{{issue_id}}/sync-report.md
+sync_actions_file=specs/{{issue_id}}/sync-actions.md
 consistency_score={{consistency_score}}
 
 # step
@@ -34,31 +34,31 @@ consistency_score={{consistency_score}}
 以下のファイルをすべて読み込む（存在するもののみ）：
 
 **Issue 成果物**:
-- `docs/issues/{{issue_id}}/issue-struct.md`
-- `docs/issues/{{issue_id}}/tasks.md`
-- `docs/issues/{{issue_id}}/note.md`
+- `specs/{{issue_id}}/issue-struct.md`
+- `specs/{{issue_id}}/tasks.md`
+- `specs/{{issue_id}}/note.md`
 
 **IMP 成果物**:
-- `docs/imps/{{issue_id}}/IMP.md`
-- `docs/imps/{{issue_id}}/IMP-checklist.md`
-- `docs/imps/{{issue_id}}/IMP-risks.md`
+- `specs/{{issue_id}}/IMP.md`
+- `specs/{{issue_id}}/IMP-checklist.md`
+- `specs/{{issue_id}}/IMP-risks.md`
 
 **実装成果物**:
-- `docs/implements/{{issue_id}}/*/patch-plan.md`（全タスク）
-- `docs/implements/{{issue_id}}/*/impl-memo.md`（全タスク）
+- `specs/{{issue_id}}/implements/*/patch-plan.md`（全タスク）
+- `specs/{{issue_id}}/implements/*/impl-memo.md`（全タスク）
 
 **テスト成果物**:
-- `docs/tests/{{issue_id}}/*/testcases.md`（全タスク）
-- `docs/tests/{{issue_id}}/*/test-plan.md`（全タスク）
-- `docs/tests/{{issue_id}}/*/test-results.md`（存在する場合）
+- `specs/{{issue_id}}/tests/*/testcases.md`（全タスク）
+- `specs/{{issue_id}}/tests/*/test-plan.md`（全タスク）
+- `specs/{{issue_id}}/tests/*/test-results.md`（存在する場合）
 
 **逆仕様成果物**:
-- `docs/specs/{{issue_id}}/rev-spec.md`
-- `docs/specs/{{issue_id}}/rev-api.md`
-- `docs/specs/{{issue_id}}/rev-schema.md`
+- `specs/{{issue_id}}/rev-spec.md`
+- `specs/{{issue_id}}/rev-api.md`
+- `specs/{{issue_id}}/rev-schema.md`
 
 **過去の同期レポート**:
-- `docs/sync/{{issue_id}}/sync-report.md`（存在する場合）
+- `specs/{{issue_id}}/sync-report.md`（存在する場合）
 
 ## step3: 整合性チェックマトリクスの実行
 
@@ -105,7 +105,7 @@ consistency_score={{consistency_score}}
 
 ## step5: 同期レポートの生成
 
-`docs/sync/{{issue_id}}/sync-report.md` を生成する（既存の場合は上書き）。
+`specs/{{issue_id}}/sync-report.md` を生成する（既存の場合は上書き）。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/sync-report-template.md`
@@ -114,7 +114,7 @@ consistency_score={{consistency_score}}
 
 ## step6: アクションリストの生成
 
-`docs/sync/{{issue_id}}/sync-actions.md` を生成する（手動対応が必要な項目のみ）。
+`specs/{{issue_id}}/sync-actions.md` を生成する（手動対応が必要な項目のみ）。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/sync-actions-template.md`
@@ -143,8 +143,8 @@ consistency_score={{consistency_score}}
   整合性スコア: N/100 — [Excellent/Good/Fair/Poor]
 
   生成ファイル:
-    docs/sync/{{issue_id}}/sync-report.md
-    docs/sync/{{issue_id}}/sync-actions.md
+    specs/{{issue_id}}/sync-report.md
+    specs/{{issue_id}}/sync-actions.md
 
   手動対応が必要: N 件
   ```

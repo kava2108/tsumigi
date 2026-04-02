@@ -46,14 +46,7 @@ SpecKit連携={{speckit_enabled}}
 以下のディレクトリを作成する（既存ディレクトリは変更しない）：
 
 ```
-docs/issues/
-docs/imps/
-docs/implements/
-docs/tests/
-docs/specs/
-docs/drift/
-docs/reviews/
-docs/sync/
+specs/
 .tsumigi/templates/
 ```
 
@@ -92,15 +85,7 @@ docs/sync/
     "version_scheme": "semver"
   },
   "docs": {
-    "base_path": "docs",
-    "issue_path": "docs/issues",
-    "imp_path": "docs/imps",
-    "implement_path": "docs/implements",
-    "test_path": "docs/tests",
-    "spec_path": "docs/specs",
-    "drift_path": "docs/drift",
-    "review_path": "docs/reviews",
-    "sync_path": "docs/sync"
+    "base_path": "specs"
   }
 }
 ```
@@ -134,7 +119,7 @@ docs/sync/
   .tsumigi/config.json
   .tsumigi/templates/IMP-template.md
   TSUMIGI.md
-  docs/{issues,imps,implements,tests,specs,drift,reviews,sync}/.gitkeep
+  specs/.gitkeep
 
 次のステップ:
   1. 最初の Issue から作業を開始:

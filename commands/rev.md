@@ -14,11 +14,11 @@ tsumiki の `rev-design` + `rev-specs` + `rev-requirements` を統合した Skil
 
 issue_id={{issue_id}}
 target={{target}}
-imp_file=docs/imps/{{issue_id}}/IMP.md
-rev_spec_file=docs/specs/{{issue_id}}/rev-spec.md
-rev_api_file=docs/specs/{{issue_id}}/rev-api.md
-rev_schema_file=docs/specs/{{issue_id}}/rev-schema.md
-rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
+imp_file=specs/{{issue_id}}/IMP.md
+rev_spec_file=specs/{{issue_id}}/rev-spec.md
+rev_api_file=specs/{{issue_id}}/rev-api.md
+rev_schema_file=specs/{{issue_id}}/rev-schema.md
+rev_requirements_file=specs/{{issue_id}}/rev-requirements.md
 信頼性評価=[]
 
 # step
@@ -32,10 +32,10 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 ## step2: 前提チェック
 
-- `docs/imps/{{issue_id}}/IMP.md` の存在を確認する
+- `specs/{{issue_id}}/IMP.md` の存在を確認する
   - 存在しない場合：IMP なしでも逆仕様生成は可能。「IMP がないため IMP との差分比較はスキップします」と通知する
   - 存在する場合：IMP.md を Read し、仕様の基準として使用する
-- `docs/implements/{{issue_id}}/` 以下のファイルを Glob で確認する
+- `specs/{{issue_id}}/implements/` 以下のファイルを Glob で確認する
 - step3 を実行する
 
 ## step3: 対象スコープの確認
@@ -78,7 +78,7 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 ## step5: 逆仕様書の生成（target: spec または all）
 
-`docs/specs/{{issue_id}}/rev-spec.md` を生成する（既存の場合は差分マージ）。
+`specs/{{issue_id}}/rev-spec.md` を生成する（既存の場合は差分マージ）。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/rev-spec-template.md`
@@ -87,7 +87,7 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 ## step6: API 仕様書の生成（target: api または all）
 
-`docs/specs/{{issue_id}}/rev-api.md` を生成する。
+`specs/{{issue_id}}/rev-api.md` を生成する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/rev-api-template.md`
@@ -96,7 +96,7 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 ## step7: データスキーマ仕様書の生成（target: schema または all）
 
-`docs/specs/{{issue_id}}/rev-schema.md` を生成する。
+`specs/{{issue_id}}/rev-schema.md` を生成する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/rev-schema-template.md`
@@ -105,7 +105,7 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 ## step8: 要件定義書の逆生成（target: requirements または all）
 
-`docs/specs/{{issue_id}}/rev-requirements.md` を生成する。
+`specs/{{issue_id}}/rev-requirements.md` を生成する。
 
 テストファイルから「何を保証しているか」を読み取り、要件として文書化する。
 
@@ -127,10 +127,10 @@ IMP との差分が検出された場合：
   ✅ rev 完了: {{issue_id}}
 
   生成ファイル:
-    docs/specs/{{issue_id}}/rev-spec.md
-    docs/specs/{{issue_id}}/rev-api.md      （api 対象時）
-    docs/specs/{{issue_id}}/rev-schema.md   （schema 対象時）
-    docs/specs/{{issue_id}}/rev-requirements.md（requirements 対象時）
+    specs/{{issue_id}}/rev-spec.md
+    specs/{{issue_id}}/rev-api.md      （api 対象時）
+    specs/{{issue_id}}/rev-schema.md   （schema 対象時）
+    specs/{{issue_id}}/rev-requirements.md（requirements 対象時）
 
   IMP との差分: N 件
   次のステップ:
