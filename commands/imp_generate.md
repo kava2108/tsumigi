@@ -14,18 +14,18 @@ IMP は Issue〜実装〜ドキュメントの**単一の真実の源**です。
 issue_id={{issue_id}}
 update_mode={{update_mode}}
 reviewer_personas={{reviewer_personas}}
-issue_struct_file=specs/issue-struct.md
-tasks_file=specs/tasks.md
-note_file=specs/note.md
-imp_file=specs/IMP.md
-imp_checklist_file=specs/IMP-checklist.md
-imp_risks_file=specs/IMP-risks.md
+issue_struct_file=specs/{{issue_id}}/issue-struct.md
+tasks_file=specs/{{issue_id}}/tasks.md
+note_file=specs/{{issue_id}}/note.md
+imp_file=specs/{{issue_id}}/IMP.md
+imp_checklist_file=specs/{{issue_id}}/IMP-checklist.md
+imp_risks_file=specs/{{issue_id}}/IMP-risks.md
 imp_version=1.0.0
 信頼性評価=[]
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:imp_generate GH-123）」と言って終了する
+- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:imp_generate 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--update` フラグを確認し update_mode に設定
   - `--reviewer` の後の値を reviewer_personas に設定
@@ -35,16 +35,16 @@ imp_version=1.0.0
 
 ## step2: 前提チェック
 
-- `specs/issue-struct.md` の存在を確認する
+- `specs/{{issue_id}}/issue-struct.md` の存在を確認する
   - 存在しない場合：「先に `/tsumigi:issue_init {{issue_id}}` を実行してください」と言って終了する
-- `specs/issue-struct.md` を Read する
-- `specs/tasks.md` を Read する
-- `specs/note.md` を存在する場合に Read する
+- `specs/{{issue_id}}/issue-struct.md` を Read する
+- `specs/{{issue_id}}/tasks.md` を Read する
+- `specs/{{issue_id}}/note.md` を存在する場合に Read する
 - step3 を実行する
 
 ## step3: 冪等チェック（既存 IMP の確認）
 
-- `specs/IMP.md` が存在するか確認する
+- `specs/{{issue_id}}/IMP.md` が存在するか確認する
   - 存在する かつ `--update` フラグなし：
     - IMP.md を Read して現在のバージョンを確認する
     - 「既存 IMP が見つかりました（ver: X.Y.Z）。--update を付けて再実行すると差分更新します」と表示する
@@ -78,14 +78,14 @@ imp_version=1.0.0
 - 以下を存在する場合に Read する：
   - `.tsumigi/config.json`
   - `.tsumigi/templates/IMP-template.md`
-  - 依存関係にある Issue の IMP: Bash で `git show <branch>:specs/IMP.md 2>/dev/null` で参照（マージ済みブランチのみ）
+  - 依存関係にある Issue の IMP: Bash で `git show <branch>:specs/{{issue_id}}/IMP.md 2>/dev/null` で参照（マージ済みブランチのみ）
 
 - 実装ファイルの現状を Glob で把握する（変更スコープの特定のため）：
   - `src/**/*.{ts,tsx,js,py,go,java}` など（技術スタックに応じて調整）
 
 ## step6: IMP 本体の生成
 
-`specs/IMP.md` を生成する。
+`specs/{{issue_id}}/IMP.md` を生成する。
 `.tsumigi/templates/IMP-template.md` が存在する場合はそれをベースにする。
 
 以下のすべてのセクションを埋める：
@@ -113,24 +113,24 @@ imp_version=1.0.0
 
 ## step7: IMP チェックリストの生成
 
-`specs/IMP-checklist.md` を生成する。
+`specs/{{issue_id}}/IMP-checklist.md` を生成する。
 選択されたペルソナに応じたチェックリストを作成する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/IMP-checklist-template.md`
   - `.claude/commands/tsumigi/templates/IMP-checklist-template.md`
 - テンプレートの変数（`{{issue_id}}`, `{{imp_version}}`, `{{reviewer_personas}}`, `{{ISO8601}}`）を置換する
-- `{{reviewer_personas}}` に含まれないペルソナのセクションは削除して `specs/IMP-checklist.md` を Write する
+- `{{reviewer_personas}}` に含まれないペルソナのセクションは削除して `specs/{{issue_id}}/IMP-checklist.md` を Write する
 
 ## step8: リスクマトリクスの生成
 
-`specs/IMP-risks.md` を生成する。
+`specs/{{issue_id}}/IMP-risks.md` を生成する。
 issue-struct.md のリスクセクションと IMP の変更スコープを分析してリスクを特定する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/IMP-risks-template.md`
   - `.claude/commands/tsumigi/templates/IMP-risks-template.md`
-- テンプレートの変数を置換し、分析したリスクを埋めて `specs/IMP-risks.md` を Write する
+- テンプレートの変数を置換し、分析したリスクを埋めて `specs/{{issue_id}}/IMP-risks.md` を Write する
 
 ## step9: 完全性スコアの算出と表示
 
@@ -163,9 +163,9 @@ IMP の必須フィールド充足率を算出して表示する：
   ✅ imp_generate 完了: {{issue_id}} (ver {{imp_version}})
 
   生成ファイル:
-    specs/IMP.md
-    specs/IMP-checklist.md
-    specs/IMP-risks.md
+    specs/{{issue_id}}/IMP.md
+    specs/{{issue_id}}/IMP-checklist.md
+    specs/{{issue_id}}/IMP-risks.md
 
   次のステップ:
     実装を開始する:  /tsumigi:implement {{issue_id}}

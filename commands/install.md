@@ -119,7 +119,7 @@ specs/
   .tsumigi/config.json
   .tsumigi/templates/IMP-template.md
   TSUMIGI.md
-  specs/.gitkeep
+  specs/{{issue_id}}/.gitkeep
 
 次のステップ:
   1. 最初の Issue から作業を開始:

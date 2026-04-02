@@ -46,23 +46,23 @@ tsumigi のヘルプを表示します。引数なしで全コマンド一覧、
 ### 標準ワークフロー
 
 ```
-/tsumigi:issue_init GH-123
+/tsumigi:issue_init 001-feature-name
     ↓
-/tsumigi:imp_generate GH-123
+/tsumigi:imp_generate 001-feature-name
     ↓
-/tsumigi:implement GH-123 [--mode tdd|direct]
+/tsumigi:implement 001-feature-name [--mode tdd|direct]
     ↓
-/tsumigi:test GH-123 [--exec]
+/tsumigi:test 001-feature-name [--exec]
     ↓
-/tsumigi:rev GH-123
+/tsumigi:rev 001-feature-name
     ↓
-/tsumigi:drift_check GH-123    ← いつでも実行可
+/tsumigi:drift_check 001-feature-name    ← いつでも実行可
     ↓
-/tsumigi:sync GH-123 [--fix]
+/tsumigi:sync 001-feature-name [--fix]
     ↓
-/tsumigi:review GH-123 [--persona arch|security|qa|all]
+/tsumigi:review 001-feature-name [--persona arch|security|qa|all]
     ↓
-/tsumigi:pr GH-123 [--post-checklist]
+/tsumigi:pr 001-feature-name [--post-checklist]
 ```
 
 ### 困ったときは
@@ -138,14 +138,14 @@ $ARGUMENTS または選択されたコマンド名に応じて以下を表示す
 Issue を構造化し、IMP 生成のインプットとなるタスク定義を作成します。
 
 引数:
-  issue-id        Issue の識別子（例: GH-123, SPEC-42）
+  issue-id        Issue の識別子（例: 001-feature-name, 042-fix-login）
   issue-url-or-text  GitHub URL またはテキスト（省略時は対話入力）
   --scope         分解の詳細度（full=詳細, lite=最小限、デフォルト: full）
 
 出力:
-  specs/issue-struct.md  構造化 Issue 定義
-  specs/tasks.md         タスク分解（TASK-XXXX 形式）
-  specs/note.md          技術コンテキストノート
+  specs/{{issue_id}}/issue-struct.md  構造化 Issue 定義
+  specs/{{issue_id}}/tasks.md         タスク分解（TASK-XXXX 形式）
+  specs/{{issue_id}}/note.md          技術コンテキストノート
 
 冪等: ✅ 再実行時は既存ファイルに差分マージ
 前提: なし（最初のステップ）
@@ -165,9 +165,9 @@ IMP は Issue〜実装〜ドキュメントの単一の真実の源です。
   --reviewer  想定レビュアー役割（複数指定可）
 
 出力:
-  specs/IMP.md             IMP 本体
-  specs/IMP-checklist.md   レビュアーチェックリスト
-  specs/IMP-risks.md       リスクマトリクス
+  specs/{{issue_id}}/IMP.md             IMP 本体
+  specs/{{issue_id}}/IMP-checklist.md   レビュアーチェックリスト
+  specs/{{issue_id}}/IMP-risks.md       リスクマトリクス
 
 冪等: ✅ --update なしの再実行は差分確認後に更新
 前提: /tsumigi:issue_init が完了していること
@@ -187,9 +187,9 @@ IMP ベースで実装案・パッチ案を生成します。
   --mode     実装モード（tdd=テストファースト, direct=実装ファースト）
 
 出力:
-  specs/implements/{task_id}/patch-plan.md  実装計画
-  specs/implements/{task_id}/impl-memo.md   実装判断の根拠
-  specs/implements/{task_id}/red-phase.md   TDD Red フェーズ
+  specs/{{issue_id}}/implements/{task_id}/patch-plan.md  実装計画
+  specs/{{issue_id}}/implements/{task_id}/impl-memo.md   実装判断の根拠
+  specs/{{issue_id}}/implements/{task_id}/red-phase.md   TDD Red フェーズ
 
 冪等: ✅ 既存実装に diff 形式で提示、確認後に適用
 前提: /tsumigi:imp_generate が完了していること
@@ -209,9 +209,9 @@ IMP ベースで実装案・パッチ案を生成します。
   --focus   テストの重点領域（デフォルト: all）
 
 出力:
-  specs/tests/{task_id}/testcases.md    テストケースマトリクス
-  specs/tests/{task_id}/test-plan.md    テスト計画書
-  specs/tests/{task_id}/test-results.md テスト実行結果（--exec 時）
+  specs/{{issue_id}}/tests/{task_id}/testcases.md    テストケースマトリクス
+  specs/{{issue_id}}/tests/{task_id}/test-plan.md    テスト計画書
+  specs/{{issue_id}}/tests/{task_id}/test-results.md テスト実行結果（--exec 時）
 
 冪等: ✅
 前提: /tsumigi:implement が完了していること
@@ -229,10 +229,10 @@ IMP ベースで実装案・パッチ案を生成します。
   --target   生成対象（デフォルト: all）
 
 出力:
-  specs/rev-spec.md          逆生成仕様書
-  specs/rev-api.md           API 仕様（api 対象時）
-  specs/rev-schema.md        データスキーマ（schema 対象時）
-  specs/rev-requirements.md  逆生成要件定義（requirements 対象時）
+  specs/{{issue_id}}/rev-spec.md          逆生成仕様書
+  specs/{{issue_id}}/rev-api.md           API 仕様（api 対象時）
+  specs/{{issue_id}}/rev-schema.md        データスキーマ（schema 対象時）
+  specs/{{issue_id}}/rev-requirements.md  逆生成要件定義（requirements 対象時）
 
 冪等: ✅
 前提: 実装が存在すること
@@ -251,8 +251,8 @@ Issue/IMP/実装/ドキュメントの整合性を確認・修正します。
   --report-only  レポートのみ生成、変更なし
 
 出力:
-  specs/sync-report.md   整合性レポート（スコア 0-100）
-  specs/sync-actions.md  手動対応アクション一覧
+  specs/{{issue_id}}/sync-report.md   整合性レポート（スコア 0-100）
+  specs/{{issue_id}}/sync-actions.md  手動対応アクション一覧
 
 整合性スコア:
   90-100: ✅ Excellent
@@ -276,9 +276,9 @@ reviewer-oriented な差分・リスク・確認事項を整理します。
   --pr             PR 番号（GitHub PR の diff を取得）
 
 出力:
-  specs/review-checklist.md   ペルソナ別チェックリスト
-  specs/risk-matrix.md        リスクマトリクス
-  specs/review-questions.md   レビュアー確認質問
+  specs/{{issue_id}}/review-checklist.md   ペルソナ別チェックリスト
+  specs/{{issue_id}}/risk-matrix.md        リスクマトリクス
+  specs/{{issue_id}}/review-questions.md   レビュアー確認質問
 
 冪等: ✅
 ```
@@ -296,8 +296,8 @@ IMP（仕様）と実装の乖離を検出・可視化します。
   --threshold  警告閾値（デフォルト: 20）
 
 出力:
-  specs/drift-report.md   乖離レポート（スコア 0-100）
-  specs/drift-timeline.md 乖離の時系列変化
+  specs/{{issue_id}}/drift-report.md   乖離レポート（スコア 0-100）
+  specs/{{issue_id}}/drift-timeline.md 乖離の時系列変化
 
 Drift スコア:
   0-10:   ✅ Aligned
@@ -318,14 +318,14 @@ IMP の内容から GitHub PR を作成します。
 drift スコア・整合性スコアを PR 本文に埋め込みます。
 
 引数:
-  issue-id         Issue の識別子（例: GH-123）
+  issue-id         Issue の識別子（例: 001-feature-name）
   --draft          ドラフト PR として作成
   --base           ベースブランチ（デフォルト: main）
   --post-checklist レビューチェックリストを PR コメントに投稿
 
 出力:
   GitHub PR（URL を表示）
-  PR コメント: specs/review-checklist.md（--post-checklist 時）
+  PR コメント: specs/{{issue_id}}/review-checklist.md（--post-checklist 時）
 
 前提: /tsumigi:review が完了していること（--post-checklist を使う場合）
 ```
@@ -338,7 +338,7 @@ drift スコア・整合性スコアを PR 本文に埋め込みます。
 自然言語入力を tsumigi コマンドにルーティングします。
 
 例:
-  /tsumigi:cli GH-123 の Issue から作業を始めたい
+  /tsumigi:cli 001-feature-name の Issue から作業を始めたい
   /tsumigi:cli 仕様と実装がずれていないか確認して
   /tsumigi:cli セキュリティ観点でレビューして
   /tsumigi:cli 何をすべきか教えて

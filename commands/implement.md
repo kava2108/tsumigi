@@ -1,7 +1,7 @@
 ---
 description: IMP をインプットとして実装案・パッチ案を生成します。TDD モードでは失敗テストを先に作成し、最小実装で通過させます。実装後に自動で drift_check を実行します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, Bash, AskUserQuestion
-argument-hint: "<issue-id> [task-id] [--dry-run] [--mode tdd|direct]"
+argument-hint: "<issue-id> [task-id] [--dry-run] [--mode tdd|direct] [--issue <number>]"
 ---
 
 # tsumigi implement
@@ -16,36 +16,36 @@ task_id={{task_id}}
 dry_run={{dry_run}}
 mode={{mode}}
 github_issue_number={{github_issue_number}}
-imp_file=specs/IMP.md
-note_file=specs/note.md
-patch_plan_file=specs/implements/{{task_id}}/patch-plan.md
-impl_memo_file=specs/implements/{{task_id}}/impl-memo.md
-red_phase_file=specs/implements/{{task_id}}/red-phase.md
+imp_file=specs/{{issue_id}}/IMP.md
+note_file=specs/{{issue_id}}/note.md
+patch_plan_file=specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md
+impl_memo_file=specs/{{issue_id}}/implements/{{task_id}}/impl-memo.md
+red_phase_file=specs/{{issue_id}}/implements/{{task_id}}/red-phase.md
 信頼性評価=[]
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:implement GH-123）」と言って終了する
+- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:implement 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--dry-run` フラグを確認し dry_run に設定
   - `--mode tdd` または `--mode direct` を確認し mode に設定（デフォルト: tdd）
+  - `--issue` の後の数値を github_issue_number に設定
   - 最初のトークンを issue_id に設定
   - 2番目のトークン（あれば）を task_id に設定
 - context の内容をユーザーに宣言する
-- issue_id が `GH-NNN` 形式の場合、NNN を github_issue_number に設定する
 - step2 を実行する
 
 ## step2: 前提チェック
 
-- `specs/IMP.md` の存在を確認する
+- `specs/{{issue_id}}/IMP.md` の存在を確認する
   - 存在しない場合：「先に `/tsumigi:imp_generate {{issue_id}}` を実行してください」と言って終了する
 - IMP.md を Read する（imp_version と drift_baseline を取得する）
-- `specs/note.md` を存在する場合に Read する
+- `specs/{{issue_id}}/note.md` を存在する場合に Read する
 - step3 を実行する
 
 ## step2b: GitHub Issue への着手通知
 
-issue_id が `GH-NNN` 形式の場合のみ実行する：
+github_issue_number が設定されている場合のみ実行する：
 
 - Bash で Issue に着手を通知する：
   ```bash
@@ -58,7 +58,7 @@ issue_id が `GH-NNN` 形式の場合のみ実行する：
   |---|---|
   | Issue | #{{github_issue_number}} |
   | 実装モード | {{mode}} |
-  | IMP | `specs/IMP.md` |
+  | IMP | `specs/{{issue_id}}/IMP.md` |
 
   完了時に結果を報告します。
   EOF
@@ -93,7 +93,7 @@ issue_id が `GH-NNN` 形式の場合のみ実行する：
 
 ## step5: 冪等チェック（既存実装の確認）
 
-- `specs/implements/{{task_id}}/patch-plan.md` が存在するか確認する
+- `specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` が存在するか確認する
   - 存在する場合：
     - ファイルを Read する
     - 「既存の実装計画が見つかりました。差分更新します」と表示する
@@ -124,7 +124,7 @@ IMP の受け入れ基準をもとに、**失敗するテストコード**を生
   - 異常系テスト（AC に違反する場合）
   - 境界値テスト（エッジケース）
 
-- `specs/implements/{{task_id}}/red-phase.md` に記録する
+- `specs/{{issue_id}}/implements/{{task_id}}/red-phase.md` に記録する
 
 - `--dry-run` でない場合：
   - テストファイルを Write する
@@ -145,20 +145,20 @@ IMP のタスク詳細に従って実装案を生成する。
 
 **変更のトレーサビリティ**:
 - 各変更箇所に IMP のタスク ID・AC 番号をコメントで記載する
-  例: `// IMP GH-123 TASK-0001 AC-001`
+  例: `// IMP 001-feature-name TASK-0001 AC-001`
 
 ## step9: パッチ計画の記録
 
-`specs/implements/{{task_id}}/patch-plan.md` を生成する。
+`specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` を生成する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/patch-plan-template.md`
   - `.claude/commands/tsumigi/templates/patch-plan-template.md`
-- テンプレートの変数を置換し、実装内容を埋めて `specs/implements/{{task_id}}/patch-plan.md` を Write する
+- テンプレートの変数を置換し、実装内容を埋めて `specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` を Write する
 
 ## step10: 実装判断の記録
 
-`specs/implements/{{task_id}}/impl-memo.md` を生成する。
+`specs/{{issue_id}}/implements/{{task_id}}/impl-memo.md` を生成する。
 
 実装中に発生したトレードオフ・判断・代替案の検討を記録する。
 将来のレビュアーや自分が「なぜこう実装したか」を理解できるようにする。
@@ -166,7 +166,7 @@ IMP のタスク詳細に従って実装案を生成する。
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/impl-memo-template.md`
   - `.claude/commands/tsumigi/templates/impl-memo-template.md`
-- テンプレートの変数を置換し、実装判断を記録して `specs/implements/{{task_id}}/impl-memo.md` を Write する
+- テンプレートの変数を置換し、実装判断を記録して `specs/{{issue_id}}/implements/{{task_id}}/impl-memo.md` を Write する
 
 ## step11: TDD モード — Green フェーズ確認（mode=tdd の場合）
 
@@ -200,9 +200,9 @@ IMP のタスク詳細に従って実装案を生成する。
   ✅ implement 完了: {{issue_id}} / {{task_id}}
 
   生成ファイル:
-    specs/implements/{{task_id}}/patch-plan.md
-    specs/implements/{{task_id}}/impl-memo.md
-    specs/implements/{{task_id}}/red-phase.md（TDD 時）
+    specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md
+    specs/{{issue_id}}/implements/{{task_id}}/impl-memo.md
+    specs/{{issue_id}}/implements/{{task_id}}/red-phase.md（TDD 時）
 
   次のステップ:
     テスト生成:      /tsumigi:test {{issue_id}} {{task_id}}
@@ -214,7 +214,7 @@ IMP のタスク詳細に従って実装案を生成する。
 
 ## step14: GitHub Issue への完了通知
 
-issue_id が `GH-NNN` 形式の場合のみ実行する：
+github_issue_number が設定されている場合のみ実行する：
 
 - Bash で Issue に完了を通知する：
   ```bash
@@ -225,9 +225,9 @@ issue_id が `GH-NNN` 形式の場合のみ実行する：
 
   | 成果物 | パス |
   |---|---|
-  | パッチ計画 | `specs/implements/{{task_id}}/patch-plan.md` |
-  | 実装メモ | `specs/implements/{{task_id}}/impl-memo.md` |
-  | Red フェーズ（TDD） | `specs/implements/{{task_id}}/red-phase.md` |
+  | パッチ計画 | `specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` |
+  | 実装メモ | `specs/{{issue_id}}/implements/{{task_id}}/impl-memo.md` |
+  | Red フェーズ（TDD） | `specs/{{issue_id}}/implements/{{task_id}}/red-phase.md` |
 
   **次のステップ**: `/tsumigi:test {{issue_id}} {{task_id}}`
   EOF

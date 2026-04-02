@@ -1,7 +1,7 @@
 ---
 description: IMP をもとに GitHub PR を作成します。Executive Summary から PR タイトル・本文を自動生成し、レビューチェックリストを PR コメントに投稿します。
 allowed-tools: Read, Glob, Bash, Write, TodoWrite, AskUserQuestion
-argument-hint: "<issue-id> [--draft] [--base <branch>] [--post-checklist]"
+argument-hint: "<issue-id> [--draft] [--base <branch>] [--post-checklist] [--issue <number>]"
 ---
 
 # tsumigi pr
@@ -16,24 +16,24 @@ draft={{draft}}
 base_branch={{base_branch}}
 post_checklist={{post_checklist}}
 github_issue_number={{github_issue_number}}
-imp_file=specs/IMP.md
+imp_file=specs/{{issue_id}}/IMP.md
 pr_number=（作成後に設定）
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:pr GH-123）」と言って終了する
+- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:pr 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--draft` フラグを確認し draft に設定
   - `--base` の後の値を base_branch に設定（デフォルト: main）
   - `--post-checklist` フラグを確認し post_checklist に設定
+  - `--issue` の後の数値を github_issue_number に設定
   - 最初のトークンを issue_id に設定
-  - issue_id が `GH-NNN` 形式の場合、NNN を github_issue_number に設定
 - context の内容をユーザーに宣言する
 - step2 を実行する
 
 ## step2: 前提チェック
 
-- `specs/IMP.md` の存在を確認する
+- `specs/{{issue_id}}/IMP.md` の存在を確認する
   - 存在しない場合：「先に `/tsumigi:imp_generate {{issue_id}}` を実行してください」と言って終了する
 - IMP.md を Read する（imp_version, Executive Summary, status を取得する）
 - Bash で現在のブランチを確認する：
@@ -49,9 +49,9 @@ pr_number=（作成後に設定）
 
 ## step3: スコアの収集
 
-- `specs/drift-report.md` が存在する場合 Read し、drift_score を取得する（存在しない場合は "未計測"）
-- `specs/sync-report.md` が存在する場合 Read し、consistency_score を取得する（存在しない場合は "未計測"）
-- `specs/implements/` 以下から最後に使われた impl_mode を確認する（tdd/direct/不明）
+- `specs/{{issue_id}}/drift-report.md` が存在する場合 Read し、drift_score を取得する（存在しない場合は "未計測"）
+- `specs/{{issue_id}}/sync-report.md` が存在する場合 Read し、consistency_score を取得する（存在しない場合は "未計測"）
+- `specs/{{issue_id}}/implements/` 以下から最後に使われた impl_mode を確認する（tdd/direct/不明）
 - step4 を実行する
 
 ## step4: PR タイトル・本文の生成
@@ -98,14 +98,14 @@ pr_number=（作成後に設定）
 
 ## step6: レビューチェックリストの PR コメント投稿
 
-post_checklist が true の場合、または `specs/review-checklist.md` が存在する場合は実行する：
+post_checklist が true の場合、または `specs/{{issue_id}}/review-checklist.md` が存在する場合は実行する：
 
-- `specs/review-checklist.md` が存在するか確認する
+- `specs/{{issue_id}}/review-checklist.md` が存在するか確認する
   - 存在しない場合：「レビューチェックリストが未生成です。`/tsumigi:review {{issue_id}}` を先に実行することを推奨します」と案内してスキップする
   - 存在する場合：ファイルを Read する
 - Bash で PR にコメントとして投稿する：
   ```bash
-  gh pr comment {{pr_number}} --body "$(cat specs/review-checklist.md)" 2>&1
+  gh pr comment {{pr_number}} --body "$(cat specs/{{issue_id}}/review-checklist.md)" 2>&1
   ```
 - 投稿成功時：「📋 レビューチェックリストを PR コメントに投稿しました」と表示する
 - step7 を実行する

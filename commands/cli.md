@@ -158,10 +158,10 @@ suggested_command={{suggested_command}}
 
 issue_id が特定されている場合：
 - 以下の成果物の存在を Glob で確認する：
-  - `specs/issue-struct.md` → issue_init 完了？
-  - `specs/IMP.md` → imp_generate 完了？
-  - `specs/implements/` → implement 着手？
-  - `specs/tests/` → test 実施済み？
+  - `specs/{{issue_id}}/issue-struct.md` → issue_init 完了？
+  - `specs/{{issue_id}}/IMP.md` → imp_generate 完了？
+  - `specs/{{issue_id}}/implements/` → implement 着手？
+  - `specs/{{issue_id}}/tests/` → test 実施済み？
   - `specs/` → rev 実施済み？
   - `specs/` → drift_check 実施済み？
   - `specs/` → sync 実施済み？
@@ -172,7 +172,7 @@ issue_id が特定されている場合：
   📊 {{issue_id}} の進捗状況:
 
   ✅ issue_init   — specs/ 存在
-  ✅ imp_generate — specs/IMP.md 存在
+  ✅ imp_generate — specs/{{issue_id}}/IMP.md 存在
   🔄 implement    — 着手中 (TASK-0001 完了, TASK-0002 未着手)
   ❌ test         — 未実施
   ❌ rev          — 未実施
