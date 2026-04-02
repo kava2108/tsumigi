@@ -15,12 +15,12 @@ issue_id={{issue_id}}
 task_id={{task_id}}
 exec={{exec}}
 focus={{focus}}
-imp_file=specs/{{issue_id}}/IMP.md
-note_file=specs/{{issue_id}}/note.md
-patch_plan_file=specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md
-testcases_file=specs/{{issue_id}}/tests/{{task_id}}/testcases.md
-test_plan_file=specs/{{issue_id}}/tests/{{task_id}}/test-plan.md
-test_results_file=specs/{{issue_id}}/tests/{{task_id}}/test-results.md
+imp_file=specs/IMP.md
+note_file=specs/note.md
+patch_plan_file=specs/implements/{{task_id}}/patch-plan.md
+testcases_file=specs/tests/{{task_id}}/testcases.md
+test_plan_file=specs/tests/{{task_id}}/test-plan.md
+test_results_file=specs/tests/{{task_id}}/test-results.md
 信頼性評価=[]
 
 # step
@@ -36,11 +36,11 @@ test_results_file=specs/{{issue_id}}/tests/{{task_id}}/test-results.md
 
 ## step2: 前提チェック
 
-- `specs/{{issue_id}}/IMP.md` の存在を確認する
+- `specs/IMP.md` の存在を確認する
   - 存在しない場合：「先に `/tsumigi:imp_generate {{issue_id}}` を実行してください」と言って終了する
 - IMP.md を Read する
-- `specs/{{issue_id}}/note.md` を存在する場合に Read する
-- `specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` を存在する場合に Read する
+- `specs/note.md` を存在する場合に Read する
+- `specs/implements/{{task_id}}/patch-plan.md` を存在する場合に Read する
 - 既存のテストファイルを Glob で探索する（`**/*.test.ts`, `tests/**/*.py` 等）
 - step3 を実行する
 
@@ -69,7 +69,7 @@ IMP.md から以下を抽出する：
 
 ## step5: テストケースマトリクスの生成
 
-`specs/{{issue_id}}/tests/{{task_id}}/testcases.md` を生成する（既存の場合は差分マージ）。
+`specs/tests/{{task_id}}/testcases.md` を生成する（既存の場合は差分マージ）。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/testcases-template.md`
@@ -79,7 +79,7 @@ IMP.md から以下を抽出する：
 
 ## step6: テスト計画書の生成
 
-`specs/{{issue_id}}/tests/{{task_id}}/test-plan.md` を生成する。
+`specs/tests/{{task_id}}/test-plan.md` を生成する。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/test-plan-template.md`
@@ -102,7 +102,7 @@ IMP.md から以下を抽出する：
   go test ./... -v 2>&1
   ```
 
-- 結果を `specs/{{issue_id}}/tests/{{task_id}}/test-results.md` に記録する
+- 結果を `specs/tests/{{task_id}}/test-results.md` に記録する
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/test-results-template.md`
   - `.claude/commands/tsumigi/templates/test-results-template.md`
@@ -132,9 +132,9 @@ IMP の受け入れ基準と生成したテストケースを照合する：
   ✅ test 完了: {{issue_id}} / {{task_id}}
 
   生成ファイル:
-    specs/{{issue_id}}/tests/{{task_id}}/testcases.md  (N ケース)
-    specs/{{issue_id}}/tests/{{task_id}}/test-plan.md
-    specs/{{issue_id}}/tests/{{task_id}}/test-results.md（--exec 時）
+    specs/tests/{{task_id}}/testcases.md  (N ケース)
+    specs/tests/{{task_id}}/test-plan.md
+    specs/tests/{{task_id}}/test-results.md（--exec 時）
 
   カバレッジ: N/N AC = N%
 

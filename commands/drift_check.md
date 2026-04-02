@@ -15,9 +15,9 @@ IMP（仕様）と実装の乖離を検出・スコア化します。
 issue_id={{issue_id}}
 since={{since}}
 threshold={{threshold}}
-imp_file=specs/{{issue_id}}/IMP.md
-drift_report_file=specs/{{issue_id}}/drift-report.md
-drift_timeline_file=specs/{{issue_id}}/drift-timeline.md
+imp_file=specs/IMP.md
+drift_report_file=specs/drift-report.md
+drift_timeline_file=specs/drift-timeline.md
 drift_score=0
 run_id={{UUID}}
 
@@ -34,11 +34,11 @@ run_id={{UUID}}
 
 ## step2: 前提チェック
 
-- `specs/{{issue_id}}/IMP.md` の存在を確認する
+- `specs/IMP.md` の存在を確認する
   - 存在しない場合：「IMP.md が存在しません。先に `/tsumigi:imp_generate {{issue_id}}` を実行してください」と言って終了する
 - IMP.md を Read する（imp_version, drift_baseline, 受け入れ基準, API仕様, スキーマ, タスクを抽出する）
 - 過去の drift レポートを確認する：
-  - `specs/{{issue_id}}/drift-report.md` が存在する場合は Read する（前回スコアの比較用）
+  - `specs/drift-report.md` が存在する場合は Read する（前回スコアの比較用）
 
 ## step3: 実装スキャン
 
@@ -46,7 +46,7 @@ run_id={{UUID}}
 
 **ソースファイル**:
 - patch-plan.md から変更対象ファイルを取得する
-- `specs/{{issue_id}}/implements/*/patch-plan.md` を全読み込みする
+- `specs/implements/*/patch-plan.md` を全読み込みする
 - 実際の変更ファイルを Read する
 
 **テストファイル**:
@@ -146,7 +146,7 @@ INFO     件数: N件 × 1点
 
 ## step10: drift レポートの生成
 
-`specs/{{issue_id}}/drift-report.md` を生成する（上書き）。
+`specs/drift-report.md` を生成する（上書き）。
 
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/drift-report-template.md`
@@ -155,12 +155,12 @@ INFO     件数: N件 × 1点
 
 ## step11: タイムラインの更新
 
-`specs/{{issue_id}}/drift-timeline.md` に今回の実行結果を追記する（既存の場合は追記のみ）。
+`specs/drift-timeline.md` に今回の実行結果を追記する（既存の場合は追記のみ）。
 
 - タイムラインエントリのテンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/drift-timeline-entry.md`
   - `.claude/commands/tsumigi/templates/drift-timeline-entry.md`
-- テンプレートの変数を置換し、`specs/{{issue_id}}/drift-timeline.md` に追記する（Edit ツールで末尾に追加）
+- テンプレートの変数を置換し、`specs/drift-timeline.md` に追記する（Edit ツールで末尾に追加）
 
 ## step12: 閾値チェックと完了通知
 
@@ -175,8 +175,8 @@ INFO     件数: N件 × 1点
   CRITICAL: N件 / WARNING: N件 / INFO: N件
 
   生成ファイル:
-    specs/{{issue_id}}/drift-report.md
-    specs/{{issue_id}}/drift-timeline.md（追記）
+    specs/drift-report.md
+    specs/drift-timeline.md（追記）
   ```
 
 - CRITICAL が 1 件以上ある場合:
