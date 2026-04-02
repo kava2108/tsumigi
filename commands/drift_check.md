@@ -1,7 +1,7 @@
 ---
 description: IMP（仕様）と実装の乖離を5次元で検出・可視化します。drift スコア（0-100）を算出し、CRITICAL/WARNING/INFO で分類して乖離レポートを生成します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, Bash, AskUserQuestion
-argument-hint: "<issue-id> [--since <commit-ish>] [--threshold <0-100>]"
+argument-hint: "[issue-id] [--since <commit-ish>] [--threshold <0-100>]"
 ---
 
 # tsumigi drift_check
@@ -23,11 +23,14 @@ run_id={{UUID}}
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:drift_check 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--since` の後の値を since に設定
   - `--threshold` の後の値を threshold に設定（デフォルト: 20）
-  - 最初のトークンを issue_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - run_id として現在時刻を含むユニーク識別子を生成する（例: `drift-20260401-001`）
 - context の内容をユーザーに宣言する
 - step2 を実行する

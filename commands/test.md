@@ -1,7 +1,7 @@
 ---
 description: IMP と実装からテスト観点・テストケースマトリクス・検証方針を生成します。正常系/異常系/境界値/セキュリティを網羅したマトリクスを出力し、--exec で実際にテストを実行します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, Bash, AskUserQuestion
-argument-hint: "<issue-id> [task-id] [--exec] [--focus unit|integration|e2e|security|all]"
+argument-hint: "[issue-id] [task-id] [--exec] [--focus unit|integration|e2e|security|all]"
 ---
 
 # tsumigi test

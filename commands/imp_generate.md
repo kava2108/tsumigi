@@ -1,7 +1,7 @@
 ---
 description: Issue 構造定義から IMP（実装管理計画書）を生成・更新します。IMP は実装・テスト・レビューの全フェーズで参照される単一の真実の源です。reviewer-oriented な構造で監査可能な形式で出力します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, AskUserQuestion
-argument-hint: "<issue-id> [--update] [--reviewer arch|security|qa]"
+argument-hint: "[issue-id] [--update] [--reviewer arch|security|qa]"
 ---
 
 # tsumigi imp_generate

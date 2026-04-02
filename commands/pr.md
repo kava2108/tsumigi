@@ -1,7 +1,7 @@
 ---
 description: IMP をもとに GitHub PR を作成します。Executive Summary から PR タイトル・本文を自動生成し、レビューチェックリストを PR コメントに投稿します。
 allowed-tools: Read, Glob, Bash, Write, TodoWrite, AskUserQuestion
-argument-hint: "<issue-id> [--draft] [--base <branch>] [--post-checklist] [--issue <number>]"
+argument-hint: "[issue-id] [--draft] [--base <branch>] [--post-checklist] [--issue <number>]"
 ---
 
 # tsumigi pr
@@ -21,13 +21,16 @@ pr_number=（作成後に設定）
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:pr 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--draft` フラグを確認し draft に設定
   - `--base` の後の値を base_branch に設定（デフォルト: main）
   - `--post-checklist` フラグを確認し post_checklist に設定
   - `--issue` の後の数値を github_issue_number に設定
-  - 最初のトークンを issue_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - context の内容をユーザーに宣言する
 - step2 を実行する
 

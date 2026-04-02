@@ -1,7 +1,7 @@
 ---
 description: Issue/IMP/実装/ドキュメントの整合性を確認・修正します。全成果物の整合性スコアを0-100で算出し、自動修正可能な乖離を修正します。--fixで自動修正、--report-onlyでレポートのみ生成します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, AskUserQuestion
-argument-hint: "<issue-id> [--fix] [--report-only]"
+argument-hint: "[issue-id] [--fix] [--report-only]"
 ---
 
 # tsumigi sync
@@ -21,11 +21,14 @@ consistency_score={{consistency_score}}
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:sync 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--fix` フラグを確認し fix_mode に設定
   - `--report-only` フラグを確認し report_only に設定
-  - 最初のトークンを issue_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - context の内容をユーザーに宣言する
 - step2 を実行する
 

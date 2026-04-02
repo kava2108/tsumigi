@@ -1,7 +1,7 @@
 ---
 description: 実装コードから逆仕様・API仕様・データスキーマ・要件定義書を生成します。生成物はIMPとの差分フラグ付きで出力され、drift_checkのインプットになります。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, AskUserQuestion
-argument-hint: "<issue-id> [--target api|schema|spec|requirements|all]"
+argument-hint: "[issue-id] [--target api|schema|spec|requirements|all]"
 ---
 
 # tsumigi rev
@@ -23,10 +23,13 @@ rev_requirements_file=specs/{{issue_id}}/rev-requirements.md
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:rev 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--target` の後の値を target に設定（デフォルト: all）
-  - 最初のトークンを issue_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - context の内容をユーザーに宣言する
 - step2 を実行する
 

@@ -1,7 +1,7 @@
 ---
 description: reviewer-orientedな観点でIMP・実装差分・リスクを整理します。arch/security/qaのペルソナ別チェックリスト・リスクマトリクス・確認質問リストを生成します。PRレビューにも対応。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, Bash, AskUserQuestion
-argument-hint: "<issue-id> [--persona arch|security|qa|all] [--pr <pr-number>]"
+argument-hint: "[issue-id] [--persona arch|security|qa|all] [--pr <pr-number>]"
 ---
 
 # tsumigi review
@@ -22,11 +22,14 @@ review_questions_file=specs/{{issue_id}}/review-questions.md
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:review 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--persona` の後の値を persona に設定（デフォルト: all）
   - `--pr` の後の値を pr_number に設定
-  - 最初のトークンを issue_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - context の内容をユーザーに宣言する
 - step2 を実行する
 

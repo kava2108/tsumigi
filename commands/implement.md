@@ -1,7 +1,7 @@
 ---
 description: IMP をインプットとして実装案・パッチ案を生成します。TDD モードでは失敗テストを先に作成し、最小実装で通過させます。実装後に自動で drift_check を実行します。
 allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, Bash, AskUserQuestion
-argument-hint: "<issue-id> [task-id] [--dry-run] [--mode tdd|direct] [--issue <number>]"
+argument-hint: "[issue-id] [task-id] [--dry-run] [--mode tdd|direct] [--issue <number>]"
 ---
 
 # tsumigi implement
@@ -25,13 +25,16 @@ red_phase_file=specs/{{issue_id}}/implements/{{task_id}}/red-phase.md
 
 # step
 
-- $ARGUMENTS がない場合は「引数に issue-id を指定してください（例: /tsumigi:implement 001-feature-name）」と言って終了する
 - $ARGUMENTS を解析する：
   - `--dry-run` フラグを確認し dry_run に設定
   - `--mode tdd` または `--mode direct` を確認し mode に設定（デフォルト: tdd）
   - `--issue` の後の数値を github_issue_number に設定
-  - 最初のトークンを issue_id に設定
-  - 2番目のトークン（あれば）を task_id に設定
+  - 2番目のトークン以降（あれば）を task_id に設定
+- issue_id の解決：
+  - $ARGUMENTS の最初のトークンが指定されている場合はそれを issue_id に設定する
+  - 未指定の場合は Bash で `git branch --show-current 2>/dev/null` を実行し、
+    `feature/`, `feat/`, `fix/`, `hotfix/`, `chore/` などのプレフィックスを除いた値を issue_id に設定する
+  - issue_id が取得できない場合は「issue-id を指定するか、feature/NNN-name 形式のブランチに切り替えてください」と言って終了する
 - context の内容をユーザーに宣言する
 - step2 を実行する
 
