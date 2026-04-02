@@ -71,142 +71,20 @@ IMP.md から以下を抽出する：
 
 `docs/tests/{{issue_id}}/{{task_id}}/testcases.md` を生成する（既存の場合は差分マージ）。
 
-<testcases_template>
----
-issue_id: {{issue_id}}
-task_id: {{task_id}}
-imp_version: {{imp_version}}
-focus: {{focus}}
-total_cases: N
-generated_at: {{ISO8601}}
----
-
-# テストケースマトリクス: {{issue_id}} / {{task_id}}
-
-## カバレッジサマリー
-
-| AC | 正常系 | 異常系 | 境界値 | セキュリティ | 合計 | カバー状況 |
-|---|---|---|---|---|---|---|
-| AC-001 | 1 | 2 | 1 | 0 | 4 | ✅ |
-| AC-002 | 1 | 1 | 2 | 1 | 5 | ✅ |
-
-カバレッジ率: N/N AC = 100%
-
----
-
-## 正常系テストケース
-
-### TC-001: {{テスト名}}
-
-| 項目 | 内容 |
-|---|---|
-| **対応 AC** | AC-001 |
-| **優先度** | P0 |
-| **前提条件** | {{テスト実行前の状態}} |
-| **入力** | {{テスト入力データ}} |
-| **操作** | {{実行する操作}} |
-| **期待結果** | {{期待される出力・状態}} |
-| **信頼性** | 🔵確定 |
-
----
-
-## 異常系テストケース
-
-### TC-XXX: {{テスト名}}
-
-（同形式）
-
----
-
-## 境界値テストケース
-
-### TC-XXX: {{テスト名}}
-
-（同形式）
-
----
-
-## セキュリティテストケース
-<!-- focus に security が含まれる場合のみ -->
-
-### TC-SEC-001: 認証なしアクセスの拒否
-
-| 項目 | 内容 |
-|---|---|
-| **対応 AC** | AC-XXX |
-| **優先度** | P0 |
-| **テスト種別** | 認証・認可 |
-| **攻撃ベクター** | 未認証リクエスト |
-| **期待結果** | HTTP 401 が返る |
-
----
-
-## パフォーマンステストケース
-<!-- IMP に性能要件が含まれる場合 -->
-
-### TC-PERF-001: {{テスト名}}
-
-| 項目 | 内容 |
-|---|---|
-| **対応要件** | レスポンスタイム < N ms |
-| **負荷条件** | 同時 N リクエスト |
-| **期待結果** | 95パーセンタイルで N ms 以内 |
-
----
-
-## 未カバーケース（手動テスト推奨）
-
-| # | 内容 | 理由 | 推奨対応 |
-|---|---|---|---|
-| | | 自動化困難 | 手動確認 |
-</testcases_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/testcases-template.md`
+  - `.claude/commands/tsumigi/templates/testcases-template.md`
+- テンプレートの変数を置換し、IMP から抽出した受け入れ基準に基づくテストケースを埋めて Write する
+- `{{focus}}` に含まれないテスト種別のセクションは削除する
 
 ## step6: テスト計画書の生成
 
 `docs/tests/{{issue_id}}/{{task_id}}/test-plan.md` を生成する。
 
-<test_plan_template>
----
-issue_id: {{issue_id}}
-task_id: {{task_id}}
-generated_at: {{ISO8601}}
----
-
-# テスト計画書: {{issue_id}} / {{task_id}}
-
-## テスト方針
-
-{{IMP のテスト戦略セクションから転写・精緻化}}
-
-## テスト環境
-
-| 項目 | 内容 |
-|---|---|
-| **言語** | |
-| **テストフレームワーク** | |
-| **実行コマンド** | `npm test` / `pytest` / `go test ./...` 等 |
-| **テストデータ** | |
-
-## テスト優先度
-
-| 優先度 | 条件 | 件数 |
-|---|---|---|
-| P0 | CI で必ず通過すべきテスト | N |
-| P1 | リリース前に確認すべきテスト | N |
-| P2 | 余裕があれば確認するテスト | N |
-
-## 除外事項
-
-| 除外内容 | 理由 |
-|---|---|
-| | |
-
-## 合格基準
-
-- 全 P0 テストが通過すること
-- テストカバレッジが X% 以上であること
-- セキュリティテストに合格すること
-</test_plan_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/test-plan-template.md`
+  - `.claude/commands/tsumigi/templates/test-plan-template.md`
+- テンプレートの変数を置換し、IMP のテスト戦略を反映して Write する
 
 ## step7: テスト実行（--exec が指定されている場合）
 
@@ -225,39 +103,10 @@ generated_at: {{ISO8601}}
   ```
 
 - 結果を `docs/tests/{{issue_id}}/{{task_id}}/test-results.md` に記録する
-
-<test_results_template>
----
-issue_id: {{issue_id}}
-task_id: {{task_id}}
-executed_at: {{ISO8601}}
-result: PASS/FAIL
----
-
-# テスト実行結果: {{issue_id}} / {{task_id}}
-
-## サマリー
-
-| 項目 | 結果 |
-|---|---|
-| **実行日時** | {{ISO8601}} |
-| **総テスト数** | N |
-| **通過** | N |
-| **失敗** | N |
-| **スキップ** | N |
-| **カバレッジ** | N% |
-| **実行時間** | Ns |
-
-## 失敗したテスト
-
-| テスト名 | エラー内容 | 対応状況 |
-|---|---|---|
-| | | 未対応/修正中/解決済 |
-
-## カバレッジ詳細
-
-（テストランナーの出力をそのまま貼り付け）
-</test_results_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/test-results-template.md`
+  - `.claude/commands/tsumigi/templates/test-results-template.md`
+- テンプレートの変数を置換し、実行結果を埋めて Write する
 
 ## step8: カバレッジギャップの分析
 

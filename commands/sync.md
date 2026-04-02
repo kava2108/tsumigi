@@ -107,114 +107,19 @@ consistency_score={{consistency_score}}
 
 `docs/sync/{{issue_id}}/sync-report.md` を生成する（既存の場合は上書き）。
 
-<sync_report_template>
----
-issue_id: {{issue_id}}
-run_at: {{ISO8601}}
-consistency_score: N
-status: Excellent/Good/Fair/Poor
----
-
-# 整合性レポート: {{issue_id}}
-
-## スコアサマリー
-
-```
-整合性スコア: N/100 — [Excellent/Good/Fair/Poor]
-
-チェック1 Issue ↔ IMP:      N/20  [Pass/Warn/Fail]
-チェック2 IMP ↔ 実装:       N/25  [Pass/Warn/Fail]
-チェック3 IMP ↔ テスト:     N/25  [Pass/Warn/Fail]
-チェック4 実装 ↔ 逆仕様:    N/15  [Pass/Warn/Fail]
-チェック5 逆仕様 ↔ Issue:   N/15  [Pass/Warn/Fail]
-```
-
----
-
-## チェック詳細
-
-### チェック1: Issue ↔ IMP（N/20点）
-
-| 項目 | 結果 | 詳細 |
-|---|---|---|
-| 受け入れ基準の転写 | ✅/⚠️/❌ | |
-| タスク対応 | ✅/⚠️/❌ | |
-| issue_id 一致 | ✅/⚠️/❌ | |
-| 非機能要件の反映 | ✅/⚠️/❌ | |
-
-（以降、チェック2〜5を同形式で記述）
-
----
-
-## 不整合一覧
-
-| # | 種別 | 内容 | 影響度 | 自動修正? |
-|---|---|---|---|---|
-| SY-001 | IMP未反映 | issue-struct の AC-003 が IMP に未記載 | H | ❌ 手動対応 |
-| SY-002 | バージョン不一致 | IMP v1.0.0 だが patch-plan は v0.9.0 | M | ✅ 自動修正可 |
-
----
-
-## 前回実行との比較
-
-| 前回スコア | 今回スコア | 変化 |
-|---|---|---|
-| N | N | ↑N点改善 / ↓N点悪化 / 変化なし |
-
----
-
-## 次のアクション
-
-### 自動修正済み（--fix 実行時）
-- [x] SY-002: patch-plan の imp_version を更新
-
-### 手動対応が必要
-→ `docs/sync/{{issue_id}}/sync-actions.md` を参照
-</sync_report_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/sync-report-template.md`
+  - `.claude/commands/tsumigi/templates/sync-report-template.md`
+- テンプレートの変数を置換し、チェック結果を埋めて Write する
 
 ## step6: アクションリストの生成
 
 `docs/sync/{{issue_id}}/sync-actions.md` を生成する（手動対応が必要な項目のみ）。
 
-<sync_actions_template>
----
-issue_id: {{issue_id}}
-generated_at: {{ISO8601}}
-total_actions: N
----
-
-# 手動対応アクション: {{issue_id}}
-
-これらは自動修正できないため、手動での対応が必要です。
-対応完了後に `/tsumigi:sync {{issue_id}} --report-only` で再確認してください。
-
-## 優先度 HIGH（即時対応）
-
-### ACTION-001: {{内容}}
-
-| 項目 | 内容 |
-|---|---|
-| **種別** | IMP未反映 / テスト不足 / スキーマ不整合 等 |
-| **影響** | {{影響の説明}} |
-| **対応方法** | `/tsumigi:xxx` コマンドを実行する |
-| **担当** | |
-| **期限** | |
-
----
-
-## 優先度 MEDIUM（次のスプリントまで）
-
-（同形式）
-
-## 優先度 LOW（余裕があれば）
-
-（同形式）
-
-## 対応完了チェック
-
-- [ ] ACTION-001
-- [ ] ACTION-002
-</sync_actions_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/sync-actions-template.md`
+  - `.claude/commands/tsumigi/templates/sync-actions-template.md`
+- テンプレートの変数を置換し、手動対応が必要なアクションを埋めて Write する
 
 ## step7: 自動修正の実行（--fix が指定されている場合）
 

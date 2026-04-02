@@ -80,146 +80,28 @@ rev_requirements_file=docs/specs/{{issue_id}}/rev-requirements.md
 
 `docs/specs/{{issue_id}}/rev-spec.md` を生成する（既存の場合は差分マージ）。
 
-<rev_spec_template>
----
-issue_id: {{issue_id}}
-generated_at: {{ISO8601}}
-source_files: [{{解析したファイル一覧}}]
-imp_version: {{imp_version|N/A}}
----
-
-# 逆生成仕様書: {{issue_id}}
-
-> この仕様書は実装コードから自動生成されました。
-> ⚠️ マークは IMP との差分がある箇所を示します。
-
-## 機能仕様
-
-### {{機能名1}}
-
-**実際の振る舞い**:
-{{テストコードと実装コードから読み取った振る舞いを記述}}
-
-**入力**:
-- {{パラメータ名}}: {{型}} — {{説明}}
-
-**出力**:
-- 正常時: {{レスポンス}}
-- 異常時: {{エラーレスポンス}}
-
-**実装根拠**: `{{ファイルパス}}:{{行番号}}`
-
-**IMP との差分**: ✅ 一致 / ⚠️ 差分あり
-{{差分がある場合：IMP では...だが、実装では...となっている}}
-
----
-
-## 信頼性サマリー
-
-- 🔵 実装に根拠あり: N 件
-- 🟡 テストのみで確認: N 件（実装の直接確認が必要）
-- 🔴 不明（推定）: N 件
-
-## IMP との乖離サマリー
-
-⚠️ 差分が検出された箇所: N 件
-→ 詳細確認: `/tsumigi:drift_check {{issue_id}}`
-</rev_spec_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/rev-spec-template.md`
+  - `.claude/commands/tsumigi/templates/rev-spec-template.md`
+- テンプレートの変数を置換し、実装コードから読み取った仕様を埋めて Write する
 
 ## step6: API 仕様書の生成（target: api または all）
 
 `docs/specs/{{issue_id}}/rev-api.md` を生成する。
 
-<rev_api_template>
----
-issue_id: {{issue_id}}
-generated_at: {{ISO8601}}
----
-
-# 逆生成 API 仕様書: {{issue_id}}
-
-## エンドポイント一覧
-
-| Method | Path | 説明 | 認証 | 実装ファイル |
-|---|---|---|---|---|
-| GET | `/api/...` | | Required/Optional/None | `src/...` |
-
-## エンドポイント詳細
-
-### {{METHOD}} {{PATH}}
-
-**概要**: {{説明}}
-
-**認証**: {{認証方式}}
-
-**リクエスト**:
-```json
-{
-  "field": "type"
-}
-```
-
-**レスポンス（成功）**:
-```json
-HTTP 200
-{
-  "field": "type"
-}
-```
-
-**レスポンス（エラー）**:
-```
-HTTP 400: {{バリデーションエラー}}
-HTTP 401: {{認証エラー}}
-HTTP 404: {{リソース未検出}}
-HTTP 500: {{サーバーエラー}}
-```
-
-**IMP との差分**: ✅ 一致 / ⚠️ {{差分内容}}
-
-**実装根拠**: `{{ファイルパス}}:{{行番号}}`
-</rev_api_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/rev-api-template.md`
+  - `.claude/commands/tsumigi/templates/rev-api-template.md`
+- テンプレートの変数を置換し、探索したエンドポイントを埋めて Write する
 
 ## step7: データスキーマ仕様書の生成（target: schema または all）
 
 `docs/specs/{{issue_id}}/rev-schema.md` を生成する。
 
-<rev_schema_template>
----
-issue_id: {{issue_id}}
-generated_at: {{ISO8601}}
----
-
-# 逆生成スキーマ仕様書: {{issue_id}}
-
-## データモデル概要
-
-```
-{{エンティティ関連図（テキスト形式）}}
-```
-
-## テーブル/モデル定義
-
-### {{テーブル名/モデル名}}
-
-| カラム/フィールド | 型 | NULL | デフォルト | 説明 |
-|---|---|---|---|---|
-| | | | | |
-
-**インデックス**:
-- {{インデックス定義}}
-
-**制約**:
-- {{制約定義}}
-
-**IMP との差分**: ✅ 一致 / ⚠️ {{差分内容}}
-
-## 型定義（TypeScript/Python等）
-
-```typescript
-{{型定義コード}}
-```
-</rev_schema_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/rev-schema-template.md`
+  - `.claude/commands/tsumigi/templates/rev-schema-template.md`
+- テンプレートの変数を置換し、探索したスキーマを埋めて Write する
 
 ## step8: 要件定義書の逆生成（target: requirements または all）
 
@@ -227,44 +109,10 @@ generated_at: {{ISO8601}}
 
 テストファイルから「何を保証しているか」を読み取り、要件として文書化する。
 
-<rev_requirements_template>
----
-issue_id: {{issue_id}}
-generated_at: {{ISO8601}}
-derivation_method: テストコード・実装コードから逆算
----
-
-# 逆生成要件定義書: {{issue_id}}
-
-> この要件定義書はテストコード・実装コードから逆算して生成されました。
-> 🟡マークは「テストが存在しないが実装から推定した」要件です。
-
-## 機能要件
-
-### FR-001: {{機能名}}
-
-**EARS 記法**:
-[WHEN] ... [THE SYSTEM SHALL] ...
-
-**根拠**:
-- テストコード: `{{テストファイル}}:{{テスト名}}`
-- 実装コード: `{{実装ファイル}}:{{行番号}}`
-- 信頼性: 🔵/🟡/🔴
-
-**IMP との整合性**: ✅ 一致 / ⚠️ 差分あり / 🔴 IMP に未記載
-
----
-
-## 非機能要件
-
-（同形式）
-
-## 元の IMP に存在するが実装で未確認の要件
-
-| IMP 要件 | 状態 | 推奨アクション |
-|---|---|---|
-| AC-XXX: ... | 未実装の可能性 | `/tsumigi:drift_check` で確認 |
-</rev_requirements_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/rev-requirements-template.md`
+  - `.claude/commands/tsumigi/templates/rev-requirements-template.md`
+- テンプレートの変数を置換し、テスト・実装から逆算した要件を埋めて Write する
 
 ## step9: drift_check への橋渡し
 

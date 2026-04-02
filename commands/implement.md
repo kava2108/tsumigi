@@ -15,6 +15,7 @@ issue_id={{issue_id}}
 task_id={{task_id}}
 dry_run={{dry_run}}
 mode={{mode}}
+github_issue_number={{github_issue_number}}
 imp_file=docs/imps/{{issue_id}}/IMP.md
 note_file=docs/issues/{{issue_id}}/note.md
 patch_plan_file=docs/implements/{{issue_id}}/{{task_id}}/patch-plan.md
@@ -31,6 +32,7 @@ red_phase_file=docs/implements/{{issue_id}}/{{task_id}}/red-phase.md
   - 最初のトークンを issue_id に設定
   - 2番目のトークン（あれば）を task_id に設定
 - context の内容をユーザーに宣言する
+- issue_id が `GH-NNN` 形式の場合、NNN を github_issue_number に設定する
 - step2 を実行する
 
 ## step2: 前提チェック
@@ -40,6 +42,30 @@ red_phase_file=docs/implements/{{issue_id}}/{{task_id}}/red-phase.md
 - IMP.md を Read する（imp_version と drift_baseline を取得する）
 - `docs/issues/{{issue_id}}/note.md` を存在する場合に Read する
 - step3 を実行する
+
+## step2b: GitHub Issue への着手通知
+
+issue_id が `GH-NNN` 形式の場合のみ実行する：
+
+- Bash で Issue に着手を通知する：
+  ```bash
+  gh issue comment {{github_issue_number}} --body "$(cat <<'EOF'
+  ## 🚀 tsumigi: implement 開始
+
+  IMP に基づく実装を開始しました。
+
+  | 項目 | 値 |
+  |---|---|
+  | Issue | #{{github_issue_number}} |
+  | 実装モード | {{mode}} |
+  | IMP | `docs/imps/{{issue_id}}/IMP.md` |
+
+  完了時に結果を報告します。
+  EOF
+  )" 2>/dev/null
+  ```
+- 成功した場合：「GitHub Issue #{{github_issue_number}} に着手通知を投稿しました」と表示する
+- 失敗した場合：スキップして続行する（エラーは表示しない）
 
 ## step3: 実装モードの確認
 
@@ -125,46 +151,10 @@ IMP のタスク詳細に従って実装案を生成する。
 
 `docs/implements/{{issue_id}}/{{task_id}}/patch-plan.md` を生成する。
 
-<patch_plan_template>
----
-issue_id: {{issue_id}}
-task_id: {{task_id}}
-imp_version: {{imp_version}}
-mode: {{mode}}
-dry_run: {{dry_run}}
-created_at: {{ISO8601}}
-updated_at: {{ISO8601}}
----
-
-# パッチ計画: {{issue_id}} / {{task_id}}
-
-## 変更対象ファイル
-
-| ファイルパス | 変更種別 | 変更概要 | AC 対応 |
-|---|---|---|---|
-| | 新規/変更/削除 | | AC-001, AC-002 |
-
-## 変更内容サマリー
-
-{{各ファイルの変更点を箇条書き}}
-
-## テストファイル
-
-| テストファイル | カバーする AC | 実行コマンド |
-|---|---|---|
-| | | |
-
-## 実装時の判断事項
-
-{{step10 で記録する実装判断}}
-
-## 完了チェックリスト
-
-- [ ] 全 AC に対応する実装が完了した
-- [ ] TDD Red フェーズのテストが全て通過した
-- [ ] 既存テストが破壊されていない
-- [ ] IMP の変更ファイル一覧と実際の変更が一致している
-</patch_plan_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/patch-plan-template.md`
+  - `.claude/commands/tsumigi/templates/patch-plan-template.md`
+- テンプレートの変数を置換し、実装内容を埋めて `docs/implements/{{issue_id}}/{{task_id}}/patch-plan.md` を Write する
 
 ## step10: 実装判断の記録
 
@@ -173,33 +163,10 @@ updated_at: {{ISO8601}}
 実装中に発生したトレードオフ・判断・代替案の検討を記録する。
 将来のレビュアーや自分が「なぜこう実装したか」を理解できるようにする。
 
-<impl_memo_template>
----
-issue_id: {{issue_id}}
-task_id: {{task_id}}
-created_at: {{ISO8601}}
----
-
-# 実装判断メモ: {{issue_id}} / {{task_id}}
-
-## 採用したアプローチ
-
-{{実装方針の説明}}
-
-## 検討した代替案
-
-| 代替案 | 不採用の理由 |
-|---|---|
-| | |
-
-## 既存コードへの影響
-
-{{既存実装への影響・注意点}}
-
-## TODO・未解決事項
-
-- [ ] {{次のタスク・残課題}}
-</impl_memo_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/impl-memo-template.md`
+  - `.claude/commands/tsumigi/templates/impl-memo-template.md`
+- テンプレートの変数を置換し、実装判断を記録して `docs/implements/{{issue_id}}/{{task_id}}/impl-memo.md` を Write する
 
 ## step11: TDD モード — Green フェーズ確認（mode=tdd の場合）
 
@@ -244,3 +211,27 @@ created_at: {{ISO8601}}
   ```
 
 - TodoWrite ツールでタスクを完了にマークする
+
+## step14: GitHub Issue への完了通知
+
+issue_id が `GH-NNN` 形式の場合のみ実行する：
+
+- Bash で Issue に完了を通知する：
+  ```bash
+  gh issue comment {{github_issue_number}} --body "$(cat <<'EOF'
+  ## ✅ tsumigi: implement 完了
+
+  実装が完了しました。
+
+  | 成果物 | パス |
+  |---|---|
+  | パッチ計画 | `docs/implements/{{issue_id}}/{{task_id}}/patch-plan.md` |
+  | 実装メモ | `docs/implements/{{issue_id}}/{{task_id}}/impl-memo.md` |
+  | Red フェーズ（TDD） | `docs/implements/{{issue_id}}/{{task_id}}/red-phase.md` |
+
+  **次のステップ**: `/tsumigi:test {{issue_id}} {{task_id}}`
+  EOF
+  )" 2>/dev/null
+  ```
+- 成功した場合：「GitHub Issue #{{github_issue_number}} に完了通知を投稿しました」と表示する
+- 失敗した場合：スキップする（エラーは表示しない）

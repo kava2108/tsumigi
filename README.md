@@ -18,16 +18,22 @@ tsumigi は Claude Code を使った **AI-TDD エンジン**です。
 
 ## インストール
 
-Claude Code Chat では、/plugin コマンドは利用できません。
-拡張機能の導入やプラグインの追加は、Claude Code Chat の公式ドキュメントや設定画面から行ってください。
-もしくは、リポジトリをクローンして手動でセットアップしてください：
+リポジトリをクローンして `setup.sh` を実行します。
+コマンドは `~/.claude/commands/tsumigi/` にインストールされ、すべてのプロジェクトで `/tsumigi:*` として利用できます。
 
 ```bash
+# 1. リポジトリをクローン
 git clone https://github.com/kava2108/tsumigi.git
 cd tsumigi
-# 必要に応じて依存パッケージをインストール
-# 例: npm install など
+
+# 2. グローバルインストール（全プロジェクトで使用可能）
+bash setup.sh
+
+# または、特定プロジェクトのみに限定する場合
+# bash setup.sh --project
 ```
+
+Claude Code を再起動するとコマンドが有効になります。
 
 ## クイックスタート
 

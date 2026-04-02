@@ -1,6 +1,6 @@
 ---
 description: GitHub Issue または自然言語の課題記述から、構造化タスク定義・note.md を生成します。IMP 生成のインプットとなる成果物を作成します。
-allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, WebFetch, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Edit, TodoWrite, WebFetch, Bash, AskUserQuestion
 argument-hint: "<issue-id> [issue-url-or-text] [--scope full|lite]"
 ---
 
@@ -42,20 +42,32 @@ note_file=docs/issues/{{issue_id}}/note.md
 
 ## step3: Issue 内容の取得
 
-- issue_source の内容に応じて処理を分岐する：
+issue_source と issue_id の内容に応じて処理を分岐する：
 
-  **GitHub URL の場合**（`github.com` を含む、または `GH-` + 数字のみ）:
-  - WebFetch ツールで Issue 本文・受け入れ基準・コメントを取得する
-  - 取得できない場合はユーザーに課題内容を入力するよう求める
+**GitHub Issue の場合**（issue_id が `GH-NNN` 形式、または issue_source に `github.com/*/issues/` を含む）:
 
-  **テキストが指定されている場合**:
-  - そのテキストを課題内容として使用する
+- issue 番号を特定する：
+  - `GH-123` → `123`
+  - GitHub URL → URL 末尾の数字
+- Bash で `gh issue view <番号> --json number,title,body,labels,assignees,milestone,comments 2>/dev/null` を実行する
+  - 成功した場合：title, body, labels, assignees, milestone, comments を context に取り込む
+  - 失敗した場合（gh 未設定・権限なし等）：WebFetch にフォールバックし Issue URL を取得する
+- 取得した Issue のメタデータをまとめて表示する：
+  ```
+  📋 GitHub Issue #{{番号}} を取得しました
+  タイトル: {{title}}
+  ラベル:   {{labels}}
+  担当者:   {{assignees}}
+  ```
 
-  **未指定の場合**:
-  - AskUserQuestion ツールを使って質問する：
-    - question: "Issue の内容を教えてください（GitHub URL またはテキストで）"
-    - header: "Issue 内容"
-    - multiSelect: false
+**テキストが指定されている場合**:
+- そのテキストを課題内容として使用する
+
+**未指定の場合**:
+- AskUserQuestion ツールを使って質問する：
+  - question: "Issue の内容を教えてください（GitHub URL またはテキストで）"
+  - header: "Issue 内容"
+  - multiSelect: false
 
 - step4 を実行する
 
@@ -85,162 +97,33 @@ note_file=docs/issues/{{issue_id}}/note.md
 
 ## step6: 構造化 Issue 定義の生成
 
-取得した Issue 内容をもとに、以下の構造で `docs/issues/{{issue_id}}/issue-struct.md` を生成する。
+取得した Issue 内容をもとに `docs/issues/{{issue_id}}/issue-struct.md` を生成する。
 既存ファイルがある場合は差分マージし、変更箇所を明示する。
 
-<issue_struct_template>
----
-issue_id: {{issue_id}}
-created_at: {{ISO8601}}
-updated_at: {{ISO8601}}
-scope: {{scope}}
-status: structured
----
-
-# Issue 構造定義: {{issue_id}}
-
-## 1. 背景・動機（Why）
-<!-- 信頼性: 🔵確定 / 🟡推定 / 🔴不明 -->
-
-{{issue の背景・問題・動機を記述}}
-
-## 2. 受け入れ基準（EARS 記法）
-
-以下の形式で記述する：
-- [WHEN/WHERE/IF/WHILE] {{条件}} [THE SYSTEM SHALL] {{振る舞い}}
-
-| # | 条件 | 期待される振る舞い | 優先度 | 信頼性 |
-|---|---|---|---|---|
-| AC-001 | | | P0/P1/P2 | 🔵/🟡/🔴 |
-
-## 3. スコープ定義
-
-### 3.1 In Scope（今回の変更に含まれる）
-- 
-
-### 3.2 Out of Scope（今回の変更に含まれない）
-- 
-
-## 4. 非機能要件
-<!-- full スコープの場合のみ -->
-
-| 種別 | 要件 | 測定方法 | 信頼性 |
-|---|---|---|---|
-| パフォーマンス | | | 🔵/🟡/🔴 |
-| セキュリティ | | | 🔵/🟡/🔴 |
-| 可用性 | | | 🔵/🟡/🔴 |
-
-## 5. 依存関係・前提条件
-
-| 依存先 | 種別 | 状態 | 影響 |
-|---|---|---|---|
-| | Issue/IMP/外部 | 完了/進行中/未着手 | |
-
-## 6. エッジケース・リスク
-<!-- full スコープの場合のみ -->
-
-| シナリオ | 影響 | 対策 |
-|---|---|---|
-| | H/M/L | |
-
-## 7. 信頼性サマリー
-
-- 🔵 確定項目: X 件
-- 🟡 推定項目: Y 件（Issue に明記なし・推定で補完）
-- 🔴 不明項目: Z 件（要確認・着手前にクリアが必要）
-</issue_struct_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/issue-struct-template.md`
+  - `.claude/commands/tsumigi/templates/issue-struct-template.md`
+- テンプレートの変数（`{{issue_id}}`, `{{scope}}`, `{{ISO8601}}` 等）を実際の値で置換する
+- Issue の内容に基づいて各セクションを埋めて `docs/issues/{{issue_id}}/issue-struct.md` を Write する
 
 ## step7: タスク分解の生成
 
 `docs/issues/{{issue_id}}/tasks.md` を生成する（既存の場合は差分マージ）。
 
-<tasks_template>
----
-issue_id: {{issue_id}}
-created_at: {{ISO8601}}
-updated_at: {{ISO8601}}
-total_tasks: N
----
-
-# タスク一覧: {{issue_id}}
-
-## タスクマップ
-
-```
-TASK-0001 → TASK-0002 → TASK-0003
-               ↓
-            TASK-0004
-```
-
-## タスク詳細
-
-### TASK-0001: {{タスク名}}
-
-**概要**: {{1 行の説明}}
-
-**完了条件（EARS）**:
-- [WHEN] ... [THE SYSTEM SHALL] ...
-
-**作業内容**:
-1.
-2.
-
-**推定規模**: S/M/L（S=半日, M=1日, L=2日以上）
-
-**依存前提**: なし / TASK-XXXX 完了後
-
----
-
-（以降、同形式で続く）
-
-## 実行推奨順序
-
-1. TASK-0001（依存なし）
-2. TASK-0002（TASK-0001 完了後）
-...
-</tasks_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/tasks-template.md`
+  - `.claude/commands/tsumigi/templates/tasks-template.md`
+- テンプレートの変数を置換し、Issue から分解したタスクを埋めて `docs/issues/{{issue_id}}/tasks.md` を Write する
 
 ## step8: 技術コンテキストノートの生成
 
 `docs/issues/{{issue_id}}/note.md` を生成する（既存の場合はスキップ）。
 このファイルは後続の全 Skill が参照するコンテキストの集約場所となる。
 
-<note_template>
----
-issue_id: {{issue_id}}
-created_at: {{ISO8601}}
-purpose: 後続 Skill が参照する技術コンテキストの集約
----
-
-# 技術コンテキストノート: {{issue_id}}
-
-## 1. 技術スタック
-
-- **言語**: {{検出された言語}}
-- **フレームワーク**: {{検出されたFW}}
-- **テストフレームワーク**: {{検出されたテストFW}}
-- **パッケージマネージャー**: {{npm/yarn/pnpm/pip 等}}
-
-## 2. 関連ファイル・ディレクトリ
-
-| ファイル/ディレクトリ | 役割 | 変更見込み |
-|---|---|---|
-| | | ✅/❌ |
-
-## 3. 開発ルール・制約
-
-- {{プロジェクト固有の制約・規約}}
-
-## 4. 関連 Issue・IMP
-
-| 参照先 | 関係性 | 状態 |
-|---|---|---|
-| | 依存/被依存/参考 | |
-
-## 5. 注意事項・既知の問題
-
-- {{着手前に把握すべき注意事項}}
-</note_template>
+- テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
+  - `~/.claude/commands/tsumigi/templates/note-template.md`
+  - `.claude/commands/tsumigi/templates/note-template.md`
+- テンプレートの変数を置換し、プロジェクト探索で得た技術コンテキストを埋めて `docs/issues/{{issue_id}}/note.md` を Write する
 
 ## step9: 品質チェックと完了通知
 
@@ -269,3 +152,28 @@ purpose: 後続 Skill が参照する技術コンテキストの集約
 
 - 🔴 不明項目がある場合は「着手前に確認が必要な項目があります」と警告を表示する
 - TodoWrite ツールでタスクを完了にマークする
+- step10 を実行する
+
+## step10: GitHub Issue へのコメント投稿
+
+issue_id が `GH-NNN` 形式の場合のみ実行する：
+
+- Bash で以下を実行する：
+  ```bash
+  gh issue comment <番号> --body "$(cat <<'EOF'
+  ## 🤖 tsumigi: issue_init 完了
+
+  Issue を構造化しました。次は IMP を生成してください。
+
+  | 成果物 | パス |
+  |---|---|
+  | 構造化定義 | `docs/issues/{{issue_id}}/issue-struct.md` |
+  | タスク一覧 | `docs/issues/{{issue_id}}/tasks.md` |
+  | 技術ノート | `docs/issues/{{issue_id}}/note.md` |
+
+  **次のステップ**: `/tsumigi:imp_generate {{issue_id}}`
+  EOF
+  )" 2>/dev/null
+  ```
+- 成功した場合：「GitHub Issue #{{番号}} にコメントを投稿しました」と表示する
+- 失敗した場合（権限なし等）：スキップして終了する（エラーは表示しない）

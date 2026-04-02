@@ -34,6 +34,7 @@ tsumigi のヘルプを表示します。引数なしで全コマンド一覧、
 | `/tsumigi:sync <issue-id>` | 全成果物の整合性確認・修正 |
 | `/tsumigi:review <issue-id>` | reviewer-oriented な差分・リスク整理 |
 | `/tsumigi:drift_check <issue-id>` | 仕様と実装の乖離を検出・スコア化 |
+| `/tsumigi:pr <issue-id>` | GitHub PR を作成しレビューチェックリストを投稿 |
 
 ### ユーティリティ
 
@@ -60,6 +61,8 @@ tsumigi のヘルプを表示します。引数なしで全コマンド一覧、
 /tsumigi:sync GH-123 [--fix]
     ↓
 /tsumigi:review GH-123 [--persona arch|security|qa|all]
+    ↓
+/tsumigi:pr GH-123 [--post-checklist]
 ```
 
 ### 困ったときは
@@ -97,6 +100,7 @@ tsumigi のヘルプを表示します。引数なしで全コマンド一覧、
     - label: "sync — 整合性確認"
     - label: "review — レビュー資料生成"
     - label: "drift_check — 乖離検出"
+    - label: "pr — GitHub PR 作成"
     - label: "cli — 自然言語ルーティング"
     - label: "特に不要（閉じる）"
   - 選択されたコマンドがある場合は step3 へ、「特に不要」の場合は終了する
@@ -303,6 +307,27 @@ Drift スコア:
 
 冪等: ✅ 再実行時は前回レポートとの diff を表示
 前提: IMP.md が存在すること
+```
+
+### pr
+
+```
+/tsumigi:pr <issue-id> [--draft] [--base <branch>] [--post-checklist]
+
+IMP の内容から GitHub PR を作成します。
+drift スコア・整合性スコアを PR 本文に埋め込みます。
+
+引数:
+  issue-id         Issue の識別子（例: GH-123）
+  --draft          ドラフト PR として作成
+  --base           ベースブランチ（デフォルト: main）
+  --post-checklist レビューチェックリストを PR コメントに投稿
+
+出力:
+  GitHub PR（URL を表示）
+  PR コメント: docs/reviews/{issue_id}/review-checklist.md（--post-checklist 時）
+
+前提: /tsumigi:review が完了していること（--post-checklist を使う場合）
 ```
 
 ### cli
