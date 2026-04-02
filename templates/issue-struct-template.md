@@ -8,6 +8,10 @@ status: structured
 
 # Issue 構造定義: {{issue_id}}
 
+## 0. Summary
+
+<!-- 1文で「何をする Issue か」を完結させる -->
+
 ## 1. 背景・動機（Why）
 <!-- 信頼性: 🔵確定 / 🟡推定 / 🔴不明 -->
 
@@ -52,7 +56,12 @@ status: structured
 |---|---|---|
 | | H/M/L | |
 
-## 7. 信頼性サマリー
+## 7. Notes
+
+<!-- 補足・参考リンク・関連 Issue -->
+- IMP: `specs/{{issue_id}}/IMP.md`
+
+## 8. 信頼性サマリー
 
 - 🔵 確定項目: X 件
 - 🟡 推定項目: Y 件（Issue に明記なし・推定で補完）
