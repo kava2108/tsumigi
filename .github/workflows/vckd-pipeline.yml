@@ -1,0 +1,148 @@
+name: VCKD Autonomous Pipeline
+
+on:
+  issues:
+    types: [labeled]
+
+# 同一 Issue への並列実行を防ぐ
+concurrency:
+  group: "vckd-issue-${{ github.event.issue.number }}"
+  cancel-in-progress: false
+
+jobs:
+  route-agent:
+    runs-on: ubuntu-latest
+    # phase:* ラベルまたは approve ラベルの場合のみ実行
+    if: |
+      startsWith(github.event.label.name, 'phase:') ||
+      github.event.label.name == 'approve'
+    outputs:
+      agent_file: ${{ steps.routing.outputs.agent_file }}
+      is_approve: ${{ steps.routing.outputs.is_approve }}
+      issue_number: ${{ github.event.issue.number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine agent from label
+        id: routing
+        run: |
+          LABEL="${{ github.event.label.name }}"
+          echo "Label: $LABEL"
+
+          case "$LABEL" in
+            "phase:req")
+              echo "agent_file=.tsumigi/agents/requirements-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "phase:tds")
+              echo "agent_file=.tsumigi/agents/design-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "phase:imp")
+              echo "agent_file=.tsumigi/agents/implement-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "phase:test")
+              echo "agent_file=.tsumigi/agents/test-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "phase:ops")
+              echo "agent_file=.tsumigi/agents/ops-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "phase:change")
+              echo "agent_file=.tsumigi/agents/change-agent.md" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+            "approve")
+              echo "agent_file=" >> $GITHUB_OUTPUT
+              echo "is_approve=true" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "agent_file=" >> $GITHUB_OUTPUT
+              echo "is_approve=false" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  handle-approve:
+    needs: route-agent
+    runs-on: ubuntu-latest
+    if: needs.route-agent.outputs.is_approve == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Handle approve label
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCKD_ISSUE_NUMBER: ${{ needs.route-agent.outputs.issue_number }}
+        run: |
+          bash .tsumigi/lib/on-label-added.sh "$VCKD_ISSUE_NUMBER" "approve"
+
+  run-phase-agent:
+    needs: route-agent
+    runs-on: ubuntu-latest
+    if: |
+      needs.route-agent.outputs.is_approve == 'false' &&
+      needs.route-agent.outputs.agent_file != ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check ANTHROPIC_API_KEY
+        run: |
+          if [[ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]]; then
+            echo "WARNING: ANTHROPIC_API_KEY is not set."
+            gh issue comment "${{ needs.route-agent.outputs.issue_number }}" \
+              --body "⚠️ VCKD: \`ANTHROPIC_API_KEY\` が未設定のため Phase Agent を起動できません。リポジトリの Secrets に設定してください。" \
+              2>/dev/null || true
+            exit 0
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js (for gh CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code 2>/dev/null || \
+            echo "WARNING: Failed to install claude-code. Continuing..."
+
+      - name: Run Phase Agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCKD_ISSUE_NUMBER: ${{ needs.route-agent.outputs.issue_number }}
+          AGENT_FILE: ${{ needs.route-agent.outputs.agent_file }}
+        run: |
+          AGENT_FILE="${{ needs.route-agent.outputs.agent_file }}"
+
+          if [[ ! -f "$AGENT_FILE" ]]; then
+            echo "ERROR: Agent file not found: $AGENT_FILE"
+            gh issue comment "$VCKD_ISSUE_NUMBER" \
+              --body "❌ VCKD: Agent ファイルが見つかりません: \`${AGENT_FILE}\`" \
+              2>/dev/null || true
+            exit 1
+          fi
+
+          # Claude Code をヘッドレスモードで実行
+          # エージェントのシステムプロンプトをパイプして渡す
+          claude \
+            --print \
+            --max-turns 50 \
+            "$(cat "$AGENT_FILE")" \
+            2>&1 | tee /tmp/agent-output.log
+
+          echo "Phase Agent completed."
+
+      - name: Upload agent output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-output-${{ needs.route-agent.outputs.issue_number }}
+          path: /tmp/agent-output.log
+          retention-days: 7

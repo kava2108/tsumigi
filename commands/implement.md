@@ -154,6 +154,29 @@ IMP のタスク詳細に従って実装案を生成する。
 
 `specs/{{issue_id}}/implements/{{task_id}}/patch-plan.md` を生成する。
 
+**CEG frontmatter の付与**:
+patch-plan.md の先頭に以下の frontmatter を付与する（既に `---` で始まる frontmatter がある場合はスキップ）：
+
+```yaml
+---
+tsumigi:
+  node_id: "impl:{{issue_id}}:{{task_id}}"
+  artifact_type: "patch_plan"
+  phase: "IMP"
+  issue_id: "{{issue_id}}"
+  task_id: "{{task_id}}"
+  created_at: "{{ISO8601}}"
+coherence:
+  id: "impl:{{issue_id}}:{{task_id}}"
+  depends_on:
+    - id: "imp:{{issue_id}}"
+      relation: "implements"
+      confidence: 0.95
+      required: true
+  band: "Green"
+---
+```
+
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/patch-plan-template.md`
   - `.claude/commands/tsumigi/templates/patch-plan-template.md`

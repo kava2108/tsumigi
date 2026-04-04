@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "nodes": {},
+  "edges": [],
+  "summary": {
+    "total": 0,
+    "green": 0,
+    "amber": 0,
+    "gray": 0,
+    "last_scanned": null
+  }
+}

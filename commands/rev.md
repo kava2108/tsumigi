@@ -83,6 +83,28 @@ rev_requirements_file=specs/{{issue_id}}/rev-requirements.md
 
 `specs/{{issue_id}}/rev-spec.md` を生成する（既存の場合は差分マージ）。
 
+**CEG frontmatter の付与**:
+rev-spec.md の先頭に以下の frontmatter を付与する（既に `---` で始まる frontmatter がある場合はスキップ）：
+
+```yaml
+---
+tsumigi:
+  node_id: "rev-spec:{{issue_id}}"
+  artifact_type: "rev_spec"
+  phase: "OPS"
+  issue_id: "{{issue_id}}"
+  created_at: "{{ISO8601}}"
+coherence:
+  id: "rev-spec:{{issue_id}}"
+  depends_on:
+    - id: "imp:{{issue_id}}"
+      relation: "reverse_of"
+      confidence: 0.90
+      required: false
+  band: "Green"
+---
+```
+
 - テンプレートを Read する（以下の順で探索し、最初に見つかったものを使用する）：
   - `~/.claude/commands/tsumigi/templates/rev-spec-template.md`
   - `.claude/commands/tsumigi/templates/rev-spec-template.md`

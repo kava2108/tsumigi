@@ -1,0 +1,13 @@
+harness:
+  enabled: true
+  AUTO_STEP: false
+  mode: "claude-code-hooks"
+  baton:
+    post_comment: true
+    pending_label: "pending:next-phase"
+    approve_label: "approve"
+kiro:
+  use_cc_sdd: "auto"
+  kiro_dir: ".kiro"
+codd:
+  cli_path: null

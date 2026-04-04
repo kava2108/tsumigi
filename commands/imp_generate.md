@@ -88,6 +88,48 @@ imp_version=1.0.0
 `specs/{{issue_id}}/IMP.md` を生成する。
 `.tsumigi/templates/IMP-template.md` が存在する場合はそれをベースにする。
 
+**CEG frontmatter の生成**:
+IMP.md 本文の**先頭**に以下の frontmatter を付与する（既に `---` で始まる frontmatter がある場合はスキップ）：
+
+```yaml
+---
+tsumigi:
+  node_id: "imp:{{issue_id}}"
+  artifact_type: "imp"
+  phase: "IMP"
+  issue_id: "{{issue_id}}"
+  feature: "{{feature_name}}"
+  imp_version: "{{imp_version}}"
+  status: "active"
+  created_at: "{{ISO8601}}"
+  updated_at: "{{ISO8601}}"
+  drift_baseline: "{{git_head}}"
+coherence:
+  id: "imp:{{issue_id}}"
+  depends_on:
+    - id: "req:{{feature_name}}"
+      relation: "implements"
+      confidence: 0.95
+      required: true
+    - id: "design:{{feature_name}}"
+      relation: "derives_from"
+      confidence: 0.95
+      required: true
+  modules: []
+  band: "Green"
+  last_validated: "{{ISO8601}}"
+baton:
+  phase: "imp"
+  auto_step: false
+  pending_label: "pending:next-phase"
+  issue_number: null
+---
+```
+
+- `feature_name` の推論: `.kiro/specs/` 以下のサブディレクトリで `tasks.md` に `{{issue_id}}` が含まれるものを feature とみなす。見つからない場合は `"unknown"` を設定して警告を出す
+- `git_head` の取得: Bash で `git rev-parse HEAD 2>/dev/null` を実行し、失敗した場合は `""` を設定する
+- `modules` の推論: IMP 本文の変更対象ファイル一覧から推論する
+
 以下のすべてのセクションを埋める：
 
 **必須フィールド**（欠如すると品質チェックで警告）:
