@@ -47,6 +47,17 @@ _get_approve_label() {
   _get_config '.harness.baton.approve_label' 'approve'
 }
 
+# _validate_from_phase: from_phase 引数の許可リスト検証（REQ-010）
+# 引数: $1=phase 文字列
+# 戻り値: 0=OK, 2=不正値
+_validate_from_phase() {
+  local phase="$1"
+  # 空文字はスキップ（REQ-010-AC-2: 既存動作との後方互換性維持）
+  [[ -z "$phase" ]] && return 0
+  [[ "$phase" =~ ^(REQ|TDS|IMP|TEST|OPS|CHANGE)$ ]] \
+    || { echo "ERROR: invalid phase='$phase' — allowed: REQ|TDS|IMP|TEST|OPS|CHANGE" >&2; return 2; }
+}
+
 _ensure_baton_log() {
   if [[ ! -f "$BATON_LOG" ]]; then
     mkdir -p "$(dirname "$BATON_LOG")"
@@ -205,6 +216,9 @@ check_phase_gate() {
   local feature="${2:-}"
   local issue_id="${3:-}"
 
+  # from_phase 許可リスト検証（REQ-010-AC-1）
+  _validate_from_phase "$from_phase" || return 2
+
   local result="PASS"
   local fail_reasons=()
 
@@ -331,8 +345,51 @@ _check_phase_specific() {
   local feature="$2"
   local issue_id="$3"
 
-  case "$from_phase" in
-    REQ)
+  # phases.json の場所: このスクリプト（BASH_SOURCE[0]）の ../config/ を優先し、
+  # 見つからなければ CWD 基準の .tsumigi/config/ にフォールバックする。
+  local _lib_dir
+  _lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+  local PHASES_JSON="${_lib_dir}/../config/phases.json"
+  if [[ ! -f "$PHASES_JSON" ]]; then
+    PHASES_JSON=".tsumigi/config/phases.json"
+  fi
+
+  # phases.json が存在しない場合は安全側（FAIL）
+  if [[ ! -f "$PHASES_JSON" ]]; then
+    echo "ERROR: _check_phase_specific: phases.json not found" >&2
+    return 1
+  fi
+
+  # JSON 構文バリデーション
+  if ! jq empty "$PHASES_JSON" 2>/dev/null; then
+    echo "ERROR: _check_phase_specific: $PHASES_JSON is invalid JSON" >&2
+    return 1
+  fi
+
+  # from_phase にマッチするキーを取得（例: "IMP->TEST"）
+  local key
+  key=$(jq -r --arg from "$from_phase" \
+    'keys[] | select(startswith($from + "->"))' "$PHASES_JSON" 2>/dev/null | head -1)
+
+  # 未定義フェーズ遷移はスキップ（後方互換）
+  [[ -z "$key" ]] && return 0
+
+  # checks リストを取得して順に実行
+  while IFS= read -r check_name; do
+    [[ -z "$check_name" ]] && continue
+    _run_phase_check "$check_name" "$feature" "$issue_id" || return 1
+  done < <(jq -r --arg key "$key" '.[$key].checks[]? // empty' "$PHASES_JSON" 2>/dev/null)
+
+  return 0
+}
+
+_run_phase_check() {
+  local check_name="$1"
+  local feature="$2"
+  local issue_id="$3"
+
+  case "$check_name" in
+    ears_format|ac_id_unique|has_coherence_frontmatter)
       # requirements.md の AC が 3 件以上あること
       if [[ -f ".kiro/specs/${feature}/requirements.md" ]]; then
         local ac_count
@@ -340,23 +397,20 @@ _check_phase_specific() {
         (( ac_count >= 3 )) || return 1
       fi
       ;;
-    TDS)
-      # design.md と tasks.md の存在確認のみ（成果物チェックで実施済み）
+    all_ac_covered_in_design)
+      # design.md と tasks.md の存在確認は _check_artifacts で実施済み
       ;;
-    IMP)
-      # IMP.md に patch-plan パスが記載されていること
+    all_tasks_have_patch_plan)
       if [[ -f "specs/${issue_id}/IMP.md" ]]; then
         grep -q "patch-plan" "specs/${issue_id}/IMP.md" 2>/dev/null || return 1
       fi
       ;;
-    TEST)
-      # adversary-report.md の全体判定が PASS であること
+    adversary_pass)
       if [[ -f "specs/${issue_id}/adversary-report.md" ]]; then
         grep -q "全体判定.*PASS\|PASS" "specs/${issue_id}/adversary-report.md" 2>/dev/null || return 1
       fi
       ;;
-    OPS)
-      # drift-report.md の drift スコアが閾値以下であること（デフォルト: 20 以下）
+    drift_score_threshold)
       if [[ -f "specs/${issue_id}/drift-report.md" ]]; then
         local threshold
         threshold=$(_get_config '.drift_check.threshold' '20')
@@ -364,6 +418,12 @@ _check_phase_specific() {
         drift_score=$(grep -oP 'drift.*score.*\K[0-9]+' "specs/${issue_id}/drift-report.md" 2>/dev/null | head -1 || echo "0")
         (( drift_score <= threshold )) || return 1
       fi
+      ;;
+    no_gray_nodes)
+      _check_gray || return 1
+      ;;
+    *)
+      echo "WARNING: _run_phase_check: unknown check '$check_name'" >&2
       ;;
   esac
   return 0
