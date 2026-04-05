@@ -1,12 +1,674 @@
 {
   "version": "1.0.0",
-  "nodes": {},
-  "edges": [],
+  "nodes": {
+    "imp:tsumigi-v3-harness": {
+      "id": "imp:tsumigi-v3-harness",
+      "artifact_type": "imp",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": ".kiro/specs/tsumigi-v3-harness/IMP.md",
+      "imp_version": "1.2.0",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "design:tsumigi-v3-harness": {
+      "id": "design:tsumigi-v3-harness",
+      "artifact_type": "design",
+      "phase": "TDS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": ".kiro/specs/tsumigi-v3-harness/design.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "rev-schema:tsumigi-v3-harness": {
+      "id": "rev-schema:tsumigi-v3-harness",
+      "artifact_type": "rev_schema",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/rev-schema.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "rev-requirements:tsumigi-v3-harness": {
+      "id": "rev-requirements:tsumigi-v3-harness",
+      "artifact_type": "rev_requirements",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/rev-requirements.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "rev-spec:tsumigi-v3-harness": {
+      "id": "rev-spec:tsumigi-v3-harness",
+      "artifact_type": "rev_spec",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/rev-spec.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "rev-api:tsumigi-v3-harness": {
+      "id": "rev-api:tsumigi-v3-harness",
+      "artifact_type": "rev_api",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/rev-api.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "drift-report:tsumigi-v3-harness": {
+      "id": "drift-report:tsumigi-v3-harness",
+      "artifact_type": "drift-report",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/drift-report.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "adversary:tsumigi-v3-harness": {
+      "id": "adversary:tsumigi-v3-harness",
+      "artifact_type": "adversary_report",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Amber",
+      "file": "specs/tsumigi-v3-harness/adversary-report.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "sync-report:tsumigi-v3-harness": {
+      "id": "sync-report:tsumigi-v3-harness",
+      "artifact_type": "sync-report",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/sync-report.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "drift-timeline:tsumigi-v3-harness": {
+      "id": "drift-timeline:tsumigi-v3-harness",
+      "artifact_type": "drift-timeline",
+      "phase": "OPS",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/drift-timeline.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test-plan:tsumigi-v3-harness": {
+      "id": "test-plan:tsumigi-v3-harness",
+      "artifact_type": "test_plan",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/test-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T01": {
+      "id": "impl:tsumigi-v3-harness:T01",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T01/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T02": {
+      "id": "impl:tsumigi-v3-harness:T02",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T02/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T03": {
+      "id": "impl:tsumigi-v3-harness:T03",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T03/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T04": {
+      "id": "impl:tsumigi-v3-harness:T04",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T04/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T05": {
+      "id": "impl:tsumigi-v3-harness:T05",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T05/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T06": {
+      "id": "impl:tsumigi-v3-harness:T06",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T06/patch-plan.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "impl:tsumigi-v3-harness:T07": {
+      "id": "impl:tsumigi-v3-harness:T07",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T07/patch-plan.md",
+      "last_scanned": "2026-04-05T05:48:34Z"
+    },
+    "impl:tsumigi-v3-harness:T10": {
+      "id": "impl:tsumigi-v3-harness:T10",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T10/patch-plan.md",
+      "last_scanned": "2026-04-05T05:48:34Z"
+    },
+    "impl:tsumigi-v3-harness:T11": {
+      "id": "impl:tsumigi-v3-harness:T11",
+      "artifact_type": "patch_plan",
+      "phase": "IMP",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/implements/T11/patch-plan.md",
+      "last_scanned": "2026-04-05T05:48:34Z"
+    },
+    "test:tsumigi-v3-harness:T01": {
+      "id": "test:tsumigi-v3-harness:T01",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T01/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T02": {
+      "id": "test:tsumigi-v3-harness:T02",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T02/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T03": {
+      "id": "test:tsumigi-v3-harness:T03",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T03/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T04": {
+      "id": "test:tsumigi-v3-harness:T04",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T04/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T05": {
+      "id": "test:tsumigi-v3-harness:T05",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T05/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T06": {
+      "id": "test:tsumigi-v3-harness:T06",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T06/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "test:tsumigi-v3-harness:T07": {
+      "id": "test:tsumigi-v3-harness:T07",
+      "artifact_type": "testcases",
+      "phase": "TEST",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/tests/T07/testcases.md",
+      "last_scanned": "2026-04-05T00:00:00Z"
+    },
+    "req:tsumigi-v3-harness": {
+      "id": "req:tsumigi-v3-harness",
+      "artifact_type": "requirements",
+      "phase": "REQ",
+      "issue_id": "tsumigi-v3-harness",
+      "band": "Green",
+      "file": "specs/tsumigi-v3-harness/issue-struct.md",
+      "last_scanned": "2026-04-05T14:00:00Z"
+    }
+  },
+  "edges": [
+    {
+      "from": "imp:tsumigi-v3-harness",
+      "to": "req:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "imp:tsumigi-v3-harness",
+      "to": "design:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "design:tsumigi-v3-harness",
+      "to": "req:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "rev-schema:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "reverse_of",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "rev-requirements:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "reverse_of",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "rev-requirements:tsumigi-v3-harness",
+      "to": "test-plan:tsumigi-v3-harness",
+      "relation": "informed_by",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "rev-spec:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "reverse_of",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "rev-spec:tsumigi-v3-harness",
+      "to": "test-plan:tsumigi-v3-harness",
+      "relation": "informed_by",
+      "confidence": 0.85,
+      "required": false
+    },
+    {
+      "from": "rev-api:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "reverse_of",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "rev-api:tsumigi-v3-harness",
+      "to": "rev-spec:tsumigi-v3-harness",
+      "relation": "depends_on",
+      "confidence": 0.90,
+      "required": false
+    },
+    {
+      "from": "drift-report:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "validates",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "drift-report:tsumigi-v3-harness",
+      "to": "rev-spec:tsumigi-v3-harness",
+      "relation": "references",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "drift-report:tsumigi-v3-harness",
+      "to": "test-plan:tsumigi-v3-harness",
+      "relation": "references",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "adversary:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "validates",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "sync-report:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "validates",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "sync-report:tsumigi-v3-harness",
+      "to": "drift-report:tsumigi-v3-harness",
+      "relation": "references",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "sync-report:tsumigi-v3-harness",
+      "to": "test-plan:tsumigi-v3-harness",
+      "relation": "references",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "drift-timeline:tsumigi-v3-harness",
+      "to": "drift-report:tsumigi-v3-harness",
+      "relation": "extends",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T01",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T02",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T03",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T04",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T05",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T06",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "test-plan:tsumigi-v3-harness",
+      "to": "test:tsumigi-v3-harness:T07",
+      "relation": "aggregates",
+      "confidence": 1.0,
+      "required": false
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T01",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T02",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T03",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T03",
+      "to": "impl:tsumigi-v3-harness:T01",
+      "relation": "depends_on",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T04",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T05",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T05",
+      "to": "impl:tsumigi-v3-harness:T01",
+      "relation": "depends_on",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T05",
+      "to": "impl:tsumigi-v3-harness:T04",
+      "relation": "depends_on",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T06",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T06",
+      "to": "impl:tsumigi-v3-harness:T04",
+      "relation": "depends_on",
+      "confidence": 0.90,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T07",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T07",
+      "to": "impl:tsumigi-v3-harness:T01",
+      "relation": "depends_on",
+      "confidence": 0.90,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T07",
+      "to": "impl:tsumigi-v3-harness:T02",
+      "relation": "depends_on",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T01",
+      "to": "impl:tsumigi-v3-harness:T01",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T01",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T02",
+      "to": "impl:tsumigi-v3-harness:T02",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T02",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T03",
+      "to": "impl:tsumigi-v3-harness:T03",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T03",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T04",
+      "to": "impl:tsumigi-v3-harness:T04",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T04",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T05",
+      "to": "impl:tsumigi-v3-harness:T05",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T05",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T06",
+      "to": "impl:tsumigi-v3-harness:T06",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T06",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T07",
+      "to": "impl:tsumigi-v3-harness:T07",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "test:tsumigi-v3-harness:T07",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "derives_from",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T10",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T10",
+      "to": "test:tsumigi-v3-harness:T01",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T10",
+      "to": "test:tsumigi-v3-harness:T04",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T10",
+      "to": "test:tsumigi-v3-harness:T07",
+      "relation": "verifies",
+      "confidence": 1.0,
+      "required": true
+    },
+    {
+      "from": "impl:tsumigi-v3-harness:T11",
+      "to": "imp:tsumigi-v3-harness",
+      "relation": "implements",
+      "confidence": 0.95,
+      "required": true
+    }
+  ],
   "summary": {
-    "total": 0,
-    "green": 0,
-    "amber": 0,
+    "total": 28,
+    "green": 27,
+    "amber": 1,
     "gray": 0,
-    "last_scanned": null
+    "last_scanned": "2026-04-05T14:00:00Z",
+    "warnings": []
   }
 }
