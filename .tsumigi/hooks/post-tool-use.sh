@@ -17,6 +17,10 @@ CONFIG_FILE=".vckd/config.yaml"
 [[ -z "${VCKD_FROM_PHASE:-}" ]] && exit 0
 [[ -z "${VCKD_ISSUE_NUMBER:-}" ]] && exit 0
 
+# VCKD_FROM_PHASE 許可リスト検証（REQ-010-AC-1）
+[[ "$VCKD_FROM_PHASE" =~ ^(REQ|TDS|IMP|TEST|OPS|CHANGE)$ ]] \
+  || { echo "ERROR: invalid VCKD_FROM_PHASE='$VCKD_FROM_PHASE' — allowed: REQ|TDS|IMP|TEST|OPS|CHANGE" >&2; exit 2; }
+
 # VCKD_ISSUE_NUMBER が整数かチェック
 [[ "$VCKD_ISSUE_NUMBER" =~ ^[0-9]+$ ]] || { echo "ERROR: VCKD_ISSUE_NUMBER is not a valid integer: $VCKD_ISSUE_NUMBER" >&2; exit 2; }
 
