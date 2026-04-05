@@ -4,6 +4,11 @@ on:
   issues:
     types: [labeled]
 
+# 最小権限原則（issues: write は gh issue comment/edit に必要）
+permissions:
+  issues: write
+  contents: read
+
 # 同一 Issue への並列実行を防ぐ
 concurrency:
   group: "vckd-issue-${{ github.event.issue.number }}"
@@ -12,6 +17,7 @@ concurrency:
 jobs:
   route-agent:
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     # phase:* ラベルまたは approve ラベルの場合のみ実行
     if: |
       startsWith(github.event.label.name, 'phase:') ||
@@ -68,6 +74,7 @@ jobs:
   handle-approve:
     needs: route-agent
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     if: needs.route-agent.outputs.is_approve == 'true'
     steps:
       - name: Checkout repository
@@ -83,6 +90,7 @@ jobs:
   run-phase-agent:
     needs: route-agent
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     if: |
       needs.route-agent.outputs.is_approve == 'false' &&
       needs.route-agent.outputs.agent_file != ''

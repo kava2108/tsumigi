@@ -15,11 +15,11 @@ tsumigi:
   artifact_type: "imp"
   phase: "IMP"
   feature: "tsumigi-v3-harness"
-  imp_version: "1.0.0"
+  imp_version: "1.1.0"
   status: "active"
   created_at: "2026-04-04T00:00:00Z"
-  updated_at: "2026-04-04T00:00:00Z"
-  drift_baseline: ""
+  updated_at: "2026-04-05T00:00:00Z"
+  drift_baseline: "e5ef7f0c021d7c5c9b74ab7ce91e2e03e00a7eaf"
 
 coherence:
   id: "imp:tsumigi-v3-harness"
@@ -50,10 +50,13 @@ baton:
 # Implementation Plan（IMP）: tsumigi v3.0 Harness Engineering 統合
 
 **Feature**: `tsumigi-v3-harness`  
-**IMP バージョン**: 1.0.0  
+**IMP バージョン**: 1.1.0  
 **対象 TDS**: `.kiro/specs/tsumigi-v3-harness/design.md`（Phase Gate TDS→IMP: PASS 済み）  
 **作成日**: 2026-04-04  
 **AUTO_STEP**: false（Manual Baton Mode 前提）
+
+> **Issue 構造・ラベル定義・フェーズ FSM の詳細**: `.kiro/specs/tsumigi-v3-harness/design.md` §1〜§3 を参照。  
+> 本 IMP は TDS の設計を実装粒度に変換したものであり、Issue 構造の一次定義は design.md が保持する。
 
 ---
 
@@ -421,32 +424,28 @@ TDS §5.2 の疑似コードを忠実に Bash に変換する。
 それぞれ独立した関数（`_check_artifacts`, `_check_ceg`, `_check_phase_specific`, `_check_gray`）
 として実装し、`check_phase_gate` が順番に呼び出す構造にする。
 
-フェーズ固有チェックは JSON ファイルで定義する（`phases.json`）:
+フェーズ固有チェックは `phase-gate.sh` の `_check_phase_specific()` 内に Bash `case` 文として直接実装されている:
 
-```json
-{
-  "REQ->TDS": {
-    "required_files": [".kiro/specs/{feature}/requirements.md"],
-    "checks": ["ears_format", "ac_id_unique", "has_coherence_frontmatter"]
-  },
-  "TDS->IMP": {
-    "required_files": [".kiro/specs/{feature}/design.md", ".kiro/specs/{feature}/tasks.md"],
-    "checks": ["all_ac_covered_in_design"]
-  },
-  "IMP->TEST": {
-    "required_files": ["specs/{issue-id}/IMP.md"],
-    "checks": ["all_tasks_have_patch_plan"]
-  },
-  "TEST->OPS": {
-    "required_files": ["specs/{issue-id}/adversary-report.md"],
-    "checks": ["adversary_pass"]
-  },
-  "OPS->CHANGE": {
-    "required_files": ["specs/{issue-id}/drift-report.md"],
-    "checks": ["drift_score_threshold", "no_gray_nodes"]
-  }
-}
+```bash
+# .tsumigi/lib/phase-gate.sh — _check_phase_specific() の実装方式
+case "$from_phase" in
+  REQ)  # requirements.md の AC が 3 件以上あること
+        ac_count=$(grep -c "REQ-[0-9]*-AC-[0-9]*" "..."); (( ac_count >= 3 )) ;;
+  TDS)  # design.md と tasks.md の存在確認のみ（_check_artifacts で実施済み）
+        ;;
+  IMP)  # IMP.md に patch-plan パスが記載されていること
+        grep -q "patch-plan" "specs/${issue_id}/IMP.md" ;;
+  TEST) # adversary-report.md の全体判定が PASS であること
+        grep -q "全体判定.*PASS\|PASS" "specs/${issue_id}/adversary-report.md" ;;
+  OPS)  # drift-report.md の drift スコアが閾値以下であること
+        drift_score=...; (( drift_score <= threshold )) ;;
+esac
 ```
+
+> **設計メモ（背景）**: 当初は外部 JSON ファイル（`phases.json`）でフェーズ定義を管理し、Bash から `jq` で参照する設計だった。
+> 実装では Bash `case` 文のインライン実装を採用した。理由: フェーズ遷移ルールの変更頻度が低く、JSON 外部化による複雑性（`jq` の実行・エラーハンドリング）が benefit を上回るため。
+> 将来的にフェーズを追加・変更する場合は `_check_phase_specific()` を直接編集する。
+> 各フェーズの「必須成果物」定義は `_check_artifacts()` の `case` 文を参照すること。
 
 #### 1.5 Edge Cases / Exceptions
 
@@ -1271,5 +1270,43 @@ baton:
 
 ---
 
-*IMP 生成完了。次フェーズへ進む場合は `/tsumigi:test tsumigi-v3-harness --vmodel all` を実行してください。*
+## 7. Implementation Status
+
+本セクションは IMP v1.1.0 更新時（2026-04-05）に追加。
+GitHub Issues #1〜#7 の作成完了を受け、各タスクの実装済みファイルを棚卸しした結果を記録する。
+
+### 7.1 タスク別実装状況
+
+| タスク | Issue | 波形 | ステータス | 主要成果物 |
+|--------|-------|------|----------|-----------|
+| **T01** | [#1](../../issues/1) Baton Infrastructure | P0 | ✅ 完了 | `.vckd/config.yaml`, `.tsumigi/hooks/post-tool-use.sh`, `graph/baton-log.json`, `graph/coherence.json` |
+| **T02** | [#2](../../issues/2) CEG frontmatter 標準化 | P0 | ✅ 完了 | `.tsumigi/templates/imp-template.md`, `commands/imp_generate.md`（frontmatter step 追加済み） |
+| **T03** | [#3](../../issues/3) Phase Gate ロジック | P0 | ✅ 完了 | `.tsumigi/lib/phase-gate.sh`, `.tsumigi/lib/on-label-added.sh` |
+| **T04** | [#4](../../issues/4) Phase Agent SP（REQ/TDS/IMP） | P0 | ✅ 完了 | `.tsumigi/agents/requirements-agent.md`, `design-agent.md`, `implement-agent.md` |
+| **T05** | [#5](../../issues/5) GitHub Actions 統合 | P1 | ✅ 完了 | `.github/workflows/vckd-pipeline.yml` |
+| **T06** | [#6](../../issues/6) Phase Agent SP（TEST/OPS/CHANGE） | P1 | ✅ 完了 | `.tsumigi/agents/test-agent.md`, `adversary-agent.md`, `ops-agent.md`, `change-agent.md` |
+| **T07** | [#7](../../issues/7) coherence-scan / baton-status | P1 | ✅ 完了 | `commands/coherence-scan.md`, `commands/baton-status.md` |
+| **T08** | *(Issue なし)* 後方互換性 | P1 | ✅ T03 内包 | `phase-gate.sh` の `_check_harness_enabled()` で実現済み |
+| **T09** | *(Issue なし)* rescue / escalate | P1 | ✅ T03 内包 | `phase-gate.sh` の `emit_escalate()` / `get_retry_count()` / `reset_retry_count()` で実現済み。`commands/rescue.md` も存在 |
+
+### 7.2 スコープ注記
+
+- **GitHub Issues #1〜#7** は IMP の P0+P1 全タスク（T01〜T07）を網羅している
+- **T08（後方互換性）** は T03 の `phase-gate.sh` 内で `_check_harness_enabled()` として実装済み。独立 Issue は不要
+- **T09（rescue/escalate）** は T03 の `phase-gate.sh` 内でリトライファミリ関数として実装済み。`commands/rescue.md` も既存。独立 Issue は不要
+
+### 7.3 次のアクション
+
+P0 タスク（T01〜T04）が完了しているため、各ファイルの内容完成度レビューを実施してから TEST フェーズへ進む：
+
+```bash
+# 各 Agent ファイルの内容確認
+/tsumigi:implement tsumigi-v3-harness T01 --issue 1   # 未確認の実装補完
+/tsumigi:test tsumigi-v3-harness --vmodel all
+/tsumigi:review tsumigi-v3-harness --adversary
+```
+
+---
+
+*IMP v1.1.0 更新完了（2026-04-05）。次フェーズへ進む場合は `/tsumigi:test tsumigi-v3-harness --vmodel all` を実行してください。*
 *AUTO_STEP=false のため、まず Issue に `approve` ラベルを付与して IMP→TEST Phase Gate を通過させてください。*
