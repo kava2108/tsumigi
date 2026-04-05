@@ -1,0 +1,46 @@
+{
+  "REQ->TDS": {
+    "required_files": [
+      ".kiro/specs/{feature}/requirements.md"
+    ],
+    "checks": [
+      "ears_format",
+      "ac_id_unique",
+      "has_coherence_frontmatter"
+    ]
+  },
+  "TDS->IMP": {
+    "required_files": [
+      ".kiro/specs/{feature}/design.md",
+      ".kiro/specs/{feature}/tasks.md"
+    ],
+    "checks": [
+      "all_ac_covered_in_design"
+    ]
+  },
+  "IMP->TEST": {
+    "required_files": [
+      "specs/{issue-id}/IMP.md"
+    ],
+    "checks": [
+      "all_tasks_have_patch_plan"
+    ]
+  },
+  "TEST->OPS": {
+    "required_files": [
+      "specs/{issue-id}/adversary-report.md"
+    ],
+    "checks": [
+      "adversary_pass"
+    ]
+  },
+  "OPS->CHANGE": {
+    "required_files": [
+      "specs/{issue-id}/drift-report.md"
+    ],
+    "checks": [
+      "drift_score_threshold",
+      "no_gray_nodes"
+    ]
+  }
+}
