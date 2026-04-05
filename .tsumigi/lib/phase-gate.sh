@@ -268,10 +268,60 @@ _check_artifacts() {
 }
 
 _check_ceg() {
-  # coherence.json が存在する場合のみ循環依存チェックを実施
-  if [[ -f "graph/coherence.json" ]]; then
-    # Gray ノードや基本的な構造の確認（フル循環チェックは coherence-scan コマンドに委譲）
-    jq empty "graph/coherence.json" 2>/dev/null || return 1
+  # coherence.json が存在しない場合はチェック不要
+  if [[ ! -f "graph/coherence.json" ]]; then
+    return 0
+  fi
+
+  # Step 1: JSON 構文バリデーション
+  if ! jq empty "graph/coherence.json" 2>/dev/null; then
+    echo "WARNING: _check_ceg: graph/coherence.json is invalid JSON" >&2
+    return 1
+  fi
+
+  # Step 2: Fast path — coherence-scan が記録した circular_dep 警告を確認
+  local circular_count
+  circular_count=$(jq '[((.summary.warnings // [])[] | select(.type == "circular_dep"))] | length' \
+    "graph/coherence.json" 2>/dev/null || echo "0")
+  if (( circular_count > 0 )); then
+    echo "WARNING: _check_ceg: circular dependency detected via coherence-scan warnings" >&2
+    return 1
+  fi
+
+  # Step 3: エッジが存在しない場合はサイクル不可
+  local edge_count
+  edge_count=$(jq '.edges | length' "graph/coherence.json" 2>/dev/null || echo "0")
+  (( edge_count == 0 )) && return 0
+
+  # Step 4: DFS によるサイクル検出（jq 実装）
+  # 各ノードから DFS を開始し、現在の探索スタック（stack）に再到達したらサイクル確定
+  local cycle_result
+  cycle_result=$(jq -r '
+    def dfs(node; stack; adj):
+      if (stack | index(node)) != null then "cycle"
+      else
+        reduce (adj[node] // [])[] as $n (
+          "ok";
+          if . == "cycle" then "cycle"
+          else dfs($n; stack + [node]; adj)
+          end
+        )
+      end;
+
+    . as $g |
+    ($g.edges | reduce .[] as $e ({}; .[$e.from] += [$e.to])) as $adj |
+    ([($g.edges[] | .from, .to)] | unique) as $all_nodes |
+    reduce $all_nodes[] as $node (
+      "ok";
+      if . == "cycle" then "cycle"
+      else dfs($node; []; $adj)
+      end
+    )
+  ' "graph/coherence.json" 2>/dev/null || echo "ok")
+
+  if [[ "$cycle_result" == "cycle" ]]; then
+    echo "WARNING: _check_ceg: circular dependency detected in CEG graph" >&2
+    return 1
   fi
   return 0
 }
